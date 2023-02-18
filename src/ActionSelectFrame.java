@@ -1,11 +1,14 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class ActionSelectFrame extends JFrame {
     public ActionSelectFrame() throws HeadlessException {
         super("Flyer");
         setBounds(0, 0, 800, 600);
         setLocationRelativeTo(null);
+        addWindowListener(new WindowEventManager());
 
         // Setup manager
         JPanel main = new JPanel();
@@ -14,9 +17,11 @@ public class ActionSelectFrame extends JFrame {
 
         // Add components
         JButton upload = new JButton();
-        upload.setIcon(new ImageIcon("./res/upload.png"));
+        upload.addComponentListener(new ButtonResizeListener("./res/upload.png"));
+
         JButton download = new JButton();
-        download.setIcon(new ImageIcon("./res/download.png"));
+        download.addComponentListener(new ButtonResizeListener("./res/download.png"));
+
         main.add(upload);
         main.add(download);
 
