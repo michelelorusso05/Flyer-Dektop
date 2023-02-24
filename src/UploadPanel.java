@@ -29,23 +29,28 @@ public class UploadPanel extends JPanel {
 
         JLabel searchLabel = new JLabel("Ricerca in corso...");
         searchLabel.setFont(new Font("Arial", Font.PLAIN, 20));
+
+        JLabel spinner = new JLabel();
+        spinner.setIcon(PreloadedIcons.spinner);
+
         northPanel.add(backBtn);
         northPanel.add(searchLabel);
+        northPanel.add(spinner);
         add(northPanel, BorderLayout.NORTH);
 
-        JPanel centerPanel = new JPanel(new WrapLayout(FlowLayout.LEFT, 5, 5));
+        JPanel centerPanel = new JPanel(new WrapLayout(FlowLayout.CENTER, 25, 25));
         JScrollPane scrollPane = new JScrollPane(centerPanel);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         for(int i = 0; i < 100; i++) {
-            centerPanel.add(new DeviceButton("ciao" + i, 0));
+            centerPanel.add(new DeviceButton("ciao" + i, i % 3));
         }
         add(scrollPane, BorderLayout.CENTER);
 
         JPanel southPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
         JLabel wifiIcon = new JLabel();
         wifiIcon.setIcon(new ImageIcon(PreloadedIcons.wifi));
-        JLabel wifiWarning = new JLabel("Assicurati di essere connesso alla stessa rete WiFi del dispositivo che deve ricevere");
+        JLabel wifiWarning = new JLabel("Assicurati che il dispositivo ricevente sia connesso alla tua stessa rete WiFi.");
         wifiWarning.setFont(new Font("Arial", Font.PLAIN, 20));
         southPanel.add(wifiIcon);
         southPanel.add(wifiWarning);
