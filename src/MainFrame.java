@@ -14,6 +14,7 @@ public class MainFrame extends JFrame {
         UIManager.put( "TextComponent.arc", 5 );
 
         setBounds(0, 0, 800, 600);
+        setMinimumSize(new Dimension(800, 600));
         setLocationRelativeTo(null);
         addWindowListener(new WindowEventManager());
 

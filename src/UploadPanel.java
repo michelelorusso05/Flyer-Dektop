@@ -18,31 +18,40 @@ public class UploadPanel extends JPanel {
     public UploadPanel(CardLayout cardLayout, JPanel cardsPanel) {
         setLayout(new BorderLayout());
 
-        JPanel northPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel northPanel = new JPanel(new GridLayout(2, 1));
 
+        JPanel northPanelTop = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton backBtn = new JButton();
         backBtn.putClientProperty( "JButton.buttonType", "roundRect" );
         backBtn.setIcon(new ImageIcon(PreloadedIcons.backArrow));
         backBtn.addActionListener((e) -> {
             cardLayout.show(cardsPanel, "selection");
         });
-
         JLabel searchLabel = new JLabel("Ricerca in corso...");
         searchLabel.setFont(new Font("Arial", Font.PLAIN, 20));
-
         JLabel spinner = new JLabel();
         spinner.setIcon(PreloadedIcons.spinner);
+        northPanelTop.add(backBtn);
+        northPanelTop.add(searchLabel);
+        northPanelTop.add(spinner);
+        northPanel.add(northPanelTop);
 
-        northPanel.add(backBtn);
-        northPanel.add(searchLabel);
-        northPanel.add(spinner);
+        JPanel northPanelBottom = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel genericFileIcon = new JLabel();
+        JLabel fileName = new JLabel("NomeFile.estensione");
+        fileName.setFont(new Font("Arial", Font.PLAIN, 20));
+        genericFileIcon.setIcon(new ImageIcon(PreloadedIcons.genericFile));
+        northPanelBottom.add(genericFileIcon);
+        northPanelBottom.add(fileName);
+        northPanel.add(northPanelBottom);
+
         add(northPanel, BorderLayout.NORTH);
 
         JPanel centerPanel = new JPanel(new WrapLayout(FlowLayout.CENTER, 25, 25));
         JScrollPane scrollPane = new JScrollPane(centerPanel);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        for(int i = 0; i < 100; i++) {
+        for(int i = 0; i < 3; i++) {
             centerPanel.add(new DeviceButton("ciao" + i, i % 3));
         }
         add(scrollPane, BorderLayout.CENTER);
