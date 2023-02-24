@@ -2,10 +2,9 @@ import com.formdev.flatlaf.FlatDarkLaf;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentListener;
 
-public class ActionSelectFrame extends JFrame {
-    public ActionSelectFrame() throws HeadlessException {
+public class MainFrame extends JFrame {
+    public MainFrame() throws HeadlessException {
         super("Flyer");
         FlatDarkLaf.setup();
 
@@ -22,11 +21,11 @@ public class ActionSelectFrame extends JFrame {
         CardLayout cardLayout = new CardLayout();
         JPanel cards = new JPanel(cardLayout);
 
-        ActionSelectionPanel actionSelectionPanel = new ActionSelectionPanel("", cardLayout, cards);
-        ActionSelectionPanel actionSelectionPanel2 = new ActionSelectionPanel("siummete", cardLayout, cards);
+        ActionSelectionPanel actionSelectionPanel = new ActionSelectionPanel(cardLayout, cards);
+        UploadPanel uploadPanel = new UploadPanel(cardLayout, cards);
 
-        cards.add(actionSelectionPanel, "0");
-        cards.add(actionSelectionPanel2, "1");
+        cards.add(actionSelectionPanel, "selection");
+        cards.add(uploadPanel, "upload");
 
         // Set listeners
         setDefaultCloseOperation(EXIT_ON_CLOSE);
