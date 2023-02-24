@@ -4,13 +4,10 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 
 public class ButtonResizeListener implements ComponentListener {
-    private JButton btn;
-    private String path;
-    private ImageIcon icon;
+    protected final ImageIcon icon;
 
     public ButtonResizeListener(String path) {
-        this.path = path;
-        this.icon = new ImageIcon(this.path);
+        this.icon = new ImageIcon(path);
     }
     @Override
     public void componentResized(ComponentEvent e) {
@@ -18,10 +15,10 @@ public class ButtonResizeListener implements ComponentListener {
 
         int size = (int)(Math.min(newSize.getWidth(), newSize.getHeight()));
 
-        this.btn = (JButton) e.getComponent();
+        JButton btn = (JButton) e.getComponent();
         Image image = this.icon.getImage();
         Image imageScaled = image.getScaledInstance(size - (size / 2), size - (size / 2),  java.awt.Image.SCALE_SMOOTH);
-        this.btn.setIcon(new ImageIcon(imageScaled));
+        btn.setIcon(new ImageIcon(imageScaled));
     }
 
     @Override

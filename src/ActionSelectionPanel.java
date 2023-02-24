@@ -8,13 +8,13 @@ public class ActionSelectionPanel extends JPanel {
 
         // Add components
         JButton upload = new JButton();
-        upload.addComponentListener(new ButtonResizeListener("./res/upload.png"));
+        upload.addComponentListener(new ButtonResizeListenerSVG("./res/upload.svg"));
         upload.addActionListener((e) -> {
             cardLayout.show(cardsPanel, "upload");
         });
 
         JButton download = new JButton();
-        download.addComponentListener(new ButtonResizeListener("./res/download.png"));
+        download.addComponentListener(new ButtonResizeListenerSVG("./res/download.svg"));
 
         add(upload);
         add(download);

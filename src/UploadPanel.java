@@ -21,26 +21,8 @@ public class UploadPanel extends JPanel {
         JPanel northPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
         JButton backBtn = new JButton();
-
-        MyTranscoder transcoder = new MyTranscoder();
-        DOMImplementation impl = SVGDOMImplementation.getDOMImplementation();
-        TranscodingHints hints = new TranscodingHints();
-        hints.put(ImageTranscoder.KEY_WIDTH, 32f);
-        hints.put(ImageTranscoder.KEY_HEIGHT, 32f);
-        hints.put(ImageTranscoder.KEY_DOM_IMPLEMENTATION, impl);
-        hints.put(ImageTranscoder.KEY_DOCUMENT_ELEMENT_NAMESPACE_URI, SVGConstants.SVG_NAMESPACE_URI);
-        hints.put(ImageTranscoder.KEY_DOCUMENT_ELEMENT_NAMESPACE_URI,SVGConstants.SVG_NAMESPACE_URI);
-        hints.put(ImageTranscoder.KEY_DOCUMENT_ELEMENT, SVGConstants.SVG_SVG_TAG);
-        hints.put(ImageTranscoder.KEY_XML_PARSER_VALIDATING, false);
-        transcoder.setTranscodingHints(hints);
-        try {
-            transcoder.transcode(new TranscoderInput("./res/arrowBack.svg"), null);
-        } catch (TranscoderException e) {
-            throw new RuntimeException(e);
-        }
-        BufferedImage image = transcoder.getImage();
-
-        backBtn.setIcon(new ImageIcon(image));
+        backBtn.putClientProperty( "JButton.buttonType", "roundRect" );
+        backBtn.setIcon(new ImageIcon(PreloadedIcons.backArrow));
         backBtn.addActionListener((e) -> {
             cardLayout.show(cardsPanel, "selection");
         });
@@ -49,20 +31,24 @@ public class UploadPanel extends JPanel {
         searchLabel.setFont(new Font("Arial", Font.PLAIN, 20));
         northPanel.add(backBtn);
         northPanel.add(searchLabel);
-
         add(northPanel, BorderLayout.NORTH);
-    }
-}
 
-class MyTranscoder extends ImageTranscoder {
-    private BufferedImage image = null;
-    public BufferedImage createImage(int w, int h) {
-        image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-        return image;
-    }
-    public void writeImage(BufferedImage img, TranscoderOutput out) {
-    }
-    public BufferedImage getImage() {
-        return image;
+        JPanel centerPanel = new JPanel(new WrapLayout(FlowLayout.LEFT, 5, 5));
+        JScrollPane scrollPane = new JScrollPane(centerPanel);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        for(int i = 0; i < 100; i++) {
+            centerPanel.add(new DeviceButton("ciao" + i, 0));
+        }
+        add(scrollPane, BorderLayout.CENTER);
+
+        JPanel southPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        JLabel wifiIcon = new JLabel();
+        wifiIcon.setIcon(new ImageIcon(PreloadedIcons.wifi));
+        JLabel wifiWarning = new JLabel("Assicurati di essere connesso alla stessa rete WiFi del dispositivo che deve ricevere");
+        wifiWarning.setFont(new Font("Arial", Font.PLAIN, 20));
+        southPanel.add(wifiIcon);
+        southPanel.add(wifiWarning);
+        add(southPanel, BorderLayout.SOUTH);
     }
 }

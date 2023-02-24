@@ -8,10 +8,10 @@ public class MainFrame extends JFrame {
         super("Flyer");
         FlatDarkLaf.setup();
 
-        UIManager.put( "Button.arc", 50 );
-        UIManager.put( "Component.arc", 50 );
-        UIManager.put( "ProgressBar.arc", 50 );
-        UIManager.put( "TextComponent.arc", 50 );
+        UIManager.put( "Button.arc", 5 );
+        UIManager.put( "Component.arc", 5 );
+        UIManager.put( "ProgressBar.arc", 5 );
+        UIManager.put( "TextComponent.arc", 5 );
 
         setBounds(0, 0, 800, 600);
         setLocationRelativeTo(null);
