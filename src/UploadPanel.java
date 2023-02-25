@@ -111,6 +111,9 @@ public class UploadPanel extends JPanel {
         }
         // New host
         if (index == -1) {
+            device.addActionListener((e) -> {
+                System.out.println("TCP Connection opened for this device: " + device.getHost().getPort());
+            });
             devices.add(device);
             centerPanel.add(device);
         }
