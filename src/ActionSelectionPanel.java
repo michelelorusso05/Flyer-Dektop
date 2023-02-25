@@ -1,7 +1,12 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.net.*;
 
 public class ActionSelectionPanel extends JPanel {
+    private File selectedFile;
     public ActionSelectionPanel(CardLayout cardLayout, JPanel cardsPanel) {
         SpringLayout layout = new SpringLayout();
         setLayout(layout);
@@ -24,7 +29,14 @@ public class ActionSelectionPanel extends JPanel {
         upload.add(innerUploadBtnPanel);
 
         upload.addActionListener((e) -> {
-            cardLayout.show(cardsPanel, "upload");
+            JFileChooser fileChooser = new JFileChooser();
+            int returnValue = fileChooser.showOpenDialog(null);
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                this.selectedFile = fileChooser.getSelectedFile();
+                UploadPanel uploadPanel = new UploadPanel(cardLayout, cardsPanel, this);
+                cardsPanel.add(uploadPanel, "upload");
+                cardLayout.show(cardsPanel, "upload");
+            }
         });
 
         //Download Button
@@ -57,4 +69,6 @@ public class ActionSelectionPanel extends JPanel {
         layout.putConstraint(SpringLayout.EAST, download, -16, SpringLayout.EAST, this);
         layout.putConstraint(SpringLayout.SOUTH, download, -16, SpringLayout.SOUTH, this);
     }
+
+    public File getSelectedFile() {return selectedFile;}
 }

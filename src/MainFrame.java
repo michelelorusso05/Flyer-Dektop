@@ -23,10 +23,8 @@ public class MainFrame extends JFrame {
         JPanel cards = new JPanel(cardLayout);
 
         ActionSelectionPanel actionSelectionPanel = new ActionSelectionPanel(cardLayout, cards);
-        UploadPanel uploadPanel = new UploadPanel(cardLayout, cards);
 
         cards.add(actionSelectionPanel, "selection");
-        cards.add(uploadPanel, "upload");
 
         // Set listeners
         setDefaultCloseOperation(EXIT_ON_CLOSE);
