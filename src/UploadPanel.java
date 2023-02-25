@@ -2,14 +2,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class UploadPanel extends JPanel {
     MulticastSocket udpSocket;
     JPanel centerPanel;
-    ArrayList<Host> foundHosts;
+    ArrayList<DeviceButton> devices;
     public UploadPanel(CardLayout cardLayout, JPanel cardsPanel, ActionSelectionPanel actionSelectionPanel) {
         setLayout(new BorderLayout());
-        foundHosts = new ArrayList<>();
+        devices = new ArrayList<>();
 
         JPanel northPanel = new JPanel(new GridLayout(2, 1, 10, 10));
 
@@ -82,9 +83,8 @@ public class UploadPanel extends JPanel {
                     String name = new String(data, 3, 128);
                     int port = Byte.toUnsignedInt(data[1]) + (Byte.toUnsignedInt(data[0]) << 8);
                     Host host = new Host(received.getAddress(), name, port, data[2]);
-
-                    System.out.println("device found");
-                    centerPanel.add(new DeviceButton(host.getName(), host.getType()));
+                    DeviceButton device = new DeviceButton(host);
+                    this.addDevice(host, device);
                     centerPanel.updateUI();
 
                 } catch (SocketException e) {
@@ -100,14 +100,22 @@ public class UploadPanel extends JPanel {
             e.printStackTrace();
         }
     }
-    public void addDevice(Host found) {
-        int index = foundHosts.indexOf(found);
+    public void addDevice(Host found, DeviceButton device) {
+        int index = -1;
+        for(int i = 0; i < devices.size(); i++) {
+            DeviceButton curr = devices.get(i);
+            if(device.equals(curr)) {
+                index = i;
+                break;
+            }
+        }
         // New host
         if (index == -1) {
-            foundHosts.add(found);
+            devices.add(device);
+            centerPanel.add(device);
         }
         else {
-            foundHosts.get(index).updatePort(found.getPort());
+            devices.get(index).setPort(found.getPort());
         }
     }
 }
