@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.net.*;
+import java.util.ArrayList;
 
 public class ActionSelectionPanel extends JPanel {
     private File selectedFile;

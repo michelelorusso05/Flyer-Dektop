@@ -12,7 +12,7 @@ public class UploadPanel extends JPanel {
     ArrayList<DeviceButton> devices;
     ActionSelectionPanel actionSelectionPanel;
     JPanel progressBarPanel;
-    GridLayout progressBarGridLayout;
+    WrapLayout progressBarWrapLayout;
     int numRows;
     public UploadPanel(CardLayout cardLayout, JPanel cardsPanel, ActionSelectionPanel actionSelectionPanel) {
         setLayout(new BorderLayout());
@@ -64,16 +64,16 @@ public class UploadPanel extends JPanel {
         southPanel.add(wifiWarning);
         add(southPanel, BorderLayout.SOUTH);
 
-        numRows = 1;
-        progressBarGridLayout = new GridLayout(numRows, 1);
-        progressBarPanel = new JPanel(progressBarGridLayout);
+        progressBarWrapLayout = new WrapLayout();
+        progressBarPanel = new JPanel(progressBarWrapLayout);
         JScrollPane eastScrollPanel = new JScrollPane(progressBarPanel);
+        eastScrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        eastScrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         add(eastScrollPanel, BorderLayout.EAST);
 
         new Thread(this::listenUDP).start();
     }
     private void listenUDP() {
-        System.out.println("started thread");
         try {
             if (udpSocket != null && !udpSocket.isClosed()) {
                 udpSocket.close();
@@ -125,7 +125,6 @@ public class UploadPanel extends JPanel {
         // New host
         if (index == -1) {
             device.addActionListener((e) -> {
-                System.out.println("TCP Connection opened for this device: " + device.getHost().getPort());
                 new Thread(() -> {
                     TCPConnection(device.getHost());
                 }).start();
@@ -158,33 +157,41 @@ public class UploadPanel extends JPanel {
             dataOutputStream.writeByte(mimetypeStringBytes.length);
             // Write mimetype
             dataOutputStream.write(mimetypeStringBytes);
-            final long total = file.length();
             // Write content size
+            final long total = file.length();
             dataOutputStream.writeLong(total);
 
+
             byte[] buffer = new byte[1024 * 1024];
+            final int startSize = dataOutputStream.size();
 
-            //addProgressBar(file.getName());
+            FileProgressBar fileProgressBar = new FileProgressBar(file.getName());
+            progressBarPanel.add(fileProgressBar);
+            updateProgressBarUI();
 
-            while ((bytes = fileStream.read(buffer))
-                    != -1) {
+            while ((bytes = fileStream.read(buffer)) != -1) {
                 dataOutputStream.write(buffer, 0, bytes);
                 dataOutputStream.flush();
+                final int progress = dataOutputStream.size() - startSize;
+                final int percentage = (int) ((float) progress * 100f / total);
+                fileProgressBar.getProgressBar().setValue(percentage);
+                updateProgressBarUI();
             }
+            progressBarPanel.remove(fileProgressBar);
+            updateProgressBarUI();
             fileStream.close();
             dataOutputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    public void addProgressBar(String fileName) {
-        progressBarGridLayout.setRows(numRows++);
-        JPanel innerPanel = new JPanel(new GridLayout(2, 1));
-        innerPanel.add(new JLabel(fileName, SwingConstants.CENTER));
-        JPanel progressBarPanel = new JPanel();
-        progressBarPanel.add(new JProgressBar());
-        innerPanel.add(progressBarPanel);
-        progressBarPanel.add(innerPanel);
-        //cambia il nome coglione
+
+    public void updateProgressBarUI() {
+        progressBarPanel.revalidate();
+        progressBarPanel.repaint();
+        progressBarPanel.updateUI();
+        revalidate();
+        repaint();
+        updateUI();
     }
 }
