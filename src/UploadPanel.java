@@ -158,13 +158,13 @@ public class UploadPanel extends JPanel {
             dataOutputStream.writeByte(mimetypeStringBytes.length);
             // Write mimetype
             dataOutputStream.write(mimetypeStringBytes);
-            final long total = file.getTotalSpace();
+            final long total = file.length();
             // Write content size
             dataOutputStream.writeLong(total);
 
             byte[] buffer = new byte[1024 * 1024];
 
-            addProgressBar(file.getName());
+            //addProgressBar(file.getName());
 
             while ((bytes = fileStream.read(buffer))
                     != -1) {
