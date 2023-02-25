@@ -13,8 +13,8 @@ public class MainFrame extends JFrame {
         UIManager.put( "ProgressBar.arc", 5 );
         UIManager.put( "TextComponent.arc", 5 );
 
-        setBounds(0, 0, 800, 600);
-        setMinimumSize(new Dimension(800, 600));
+        setBounds(0, 0, 854, 480);
+        setMinimumSize(new Dimension(854, 480));
         setLocationRelativeTo(null);
         addWindowListener(new WindowEventManager());
 

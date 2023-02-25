@@ -13,9 +13,10 @@ public class LabelResizeTextListener implements ComponentListener {
     @Override
     public void componentResized(ComponentEvent e) {
         Dimension newSize = e.getComponent().getBounds().getSize();
-
         int size = (int)(Math.min(newSize.getWidth(), newSize.getHeight()));
         this.label.setFont(new Font("Arial", Font.PLAIN, size / 6));
+        e.getComponent().invalidate();
+        e.getComponent().repaint();
     }
 
     @Override

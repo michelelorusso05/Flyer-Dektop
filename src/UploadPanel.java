@@ -1,24 +1,11 @@
-import org.apache.batik.anim.dom.SVGDOMImplementation;
-import org.apache.batik.swing.JSVGCanvas;
-import org.apache.batik.transcoder.TranscoderException;
-import org.apache.batik.transcoder.TranscoderInput;
-import org.apache.batik.transcoder.TranscoderOutput;
-import org.apache.batik.transcoder.TranscodingHints;
-import org.apache.batik.transcoder.image.ImageTranscoder;
-import org.apache.batik.transcoder.keys.LengthKey;
-import org.apache.batik.util.SVGConstants;
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.svg.SVGImageElement;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 public class UploadPanel extends JPanel {
     public UploadPanel(CardLayout cardLayout, JPanel cardsPanel) {
         setLayout(new BorderLayout());
 
-        JPanel northPanel = new JPanel(new GridLayout(2, 1));
+        JPanel northPanel = new JPanel(new GridLayout(2, 1, 10, 10));
 
         JPanel northPanelTop = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton backBtn = new JButton();
@@ -51,9 +38,10 @@ public class UploadPanel extends JPanel {
         JScrollPane scrollPane = new JScrollPane(centerPanel);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        for(int i = 0; i < 3; i++) {
+        for(int i = 0; i < 10; i++) {
             centerPanel.add(new DeviceButton("ciao" + i, i % 3));
         }
+        scrollPane.setBorder(null);
         add(scrollPane, BorderLayout.CENTER);
 
         JPanel southPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));

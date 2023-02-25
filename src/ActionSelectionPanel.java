@@ -18,7 +18,6 @@ public class ActionSelectionPanel extends JPanel {
         innerUploadBtnPanel.add(uploadIcon, BorderLayout.CENTER);
 
         JLabel uploadLabel = new JLabel("Invia", SwingConstants.CENTER);
-        uploadLabel.setVerticalAlignment(JLabel.TOP);
         upload.addComponentListener(new LabelResizeTextListener(uploadLabel));
         innerUploadBtnPanel.add(uploadLabel, BorderLayout.SOUTH);
 
@@ -35,12 +34,11 @@ public class ActionSelectionPanel extends JPanel {
         innerDownloadBtnPanel.setBackground(new Color(0,0,0,0));
 
         JLabel downloadIcon = new JLabel("", SwingConstants.CENTER);
-        upload.addComponentListener(new LabelResizeListener("./res/download.svg", downloadIcon));
+        download.addComponentListener(new LabelResizeListener("./res/download.svg", downloadIcon));
         innerDownloadBtnPanel.add(downloadIcon, BorderLayout.CENTER);
 
         JLabel downloadLabel = new JLabel("Ricevi", SwingConstants.CENTER);
-        downloadLabel.setVerticalAlignment(JLabel.TOP);
-        upload.addComponentListener(new LabelResizeTextListener(downloadLabel));
+        download.addComponentListener(new LabelResizeTextListener(downloadLabel));
         innerDownloadBtnPanel.add(downloadLabel, BorderLayout.SOUTH);
 
         download.add(innerDownloadBtnPanel);
