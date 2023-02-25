@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.*;
 import java.net.*;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -8,9 +10,14 @@ public class UploadPanel extends JPanel {
     MulticastSocket udpSocket;
     JPanel centerPanel;
     ArrayList<DeviceButton> devices;
+    ActionSelectionPanel actionSelectionPanel;
+    JPanel progressBarPanel;
+    GridLayout progressBarGridLayout;
+    int numRows;
     public UploadPanel(CardLayout cardLayout, JPanel cardsPanel, ActionSelectionPanel actionSelectionPanel) {
         setLayout(new BorderLayout());
         devices = new ArrayList<>();
+        this.actionSelectionPanel = actionSelectionPanel;
 
         JPanel northPanel = new JPanel(new GridLayout(2, 1, 10, 10));
 
@@ -56,6 +63,12 @@ public class UploadPanel extends JPanel {
         southPanel.add(wifiIcon);
         southPanel.add(wifiWarning);
         add(southPanel, BorderLayout.SOUTH);
+
+        numRows = 1;
+        progressBarGridLayout = new GridLayout(numRows, 1);
+        progressBarPanel = new JPanel(progressBarGridLayout);
+        JScrollPane eastScrollPanel = new JScrollPane(progressBarPanel);
+        add(eastScrollPanel, BorderLayout.EAST);
 
         new Thread(this::listenUDP).start();
     }
@@ -113,6 +126,9 @@ public class UploadPanel extends JPanel {
         if (index == -1) {
             device.addActionListener((e) -> {
                 System.out.println("TCP Connection opened for this device: " + device.getHost().getPort());
+                new Thread(() -> {
+                    TCPConnection(device.getHost());
+                }).start();
             });
             devices.add(device);
             centerPanel.add(device);
@@ -120,5 +136,55 @@ public class UploadPanel extends JPanel {
         else {
             devices.get(index).setPort(found.getPort());
         }
+    }
+    public void TCPConnection(Host host) {
+        try (Socket socket = new Socket(host.getIp(), host.getPort())) {
+            File file = this.actionSelectionPanel.getSelectedFile();
+            InputStream fileStream = new FileInputStream(file);
+
+            int bytes;
+            socket.setSendBufferSize(1024 * 1024);
+            DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
+
+            byte[] filenameStringBytes = file.getName().getBytes();
+            byte[] mimetypeStringBytes = Files.probeContentType(file.toPath()) == null ?
+                    "application/octect-stream".getBytes() : Files.probeContentType(file.toPath()).getBytes();
+
+            // Write filename size
+            dataOutputStream.writeByte(filenameStringBytes.length);
+            // Write filename
+            dataOutputStream.write(filenameStringBytes);
+            // Write mimetype length
+            dataOutputStream.writeByte(mimetypeStringBytes.length);
+            // Write mimetype
+            dataOutputStream.write(mimetypeStringBytes);
+            final long total = file.getTotalSpace();
+            // Write content size
+            dataOutputStream.writeLong(total);
+
+            byte[] buffer = new byte[1024 * 1024];
+
+            addProgressBar(file.getName());
+
+            while ((bytes = fileStream.read(buffer))
+                    != -1) {
+                dataOutputStream.write(buffer, 0, bytes);
+                dataOutputStream.flush();
+            }
+            fileStream.close();
+            dataOutputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void addProgressBar(String fileName) {
+        progressBarGridLayout.setRows(numRows++);
+        JPanel innerPanel = new JPanel(new GridLayout(2, 1));
+        innerPanel.add(new JLabel(fileName, SwingConstants.CENTER));
+        JPanel progressBarPanel = new JPanel();
+        progressBarPanel.add(new JProgressBar());
+        innerPanel.add(progressBarPanel);
+        progressBarPanel.add(innerPanel);
+        //cambia il nome coglione
     }
 }
