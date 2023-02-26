@@ -44,7 +44,7 @@ public class UploadPanel extends JPanel {
         JLabel genericFileIcon = new JLabel();
         JLabel fileName = new JLabel(actionSelectionPanel.getSelectedFile().getName());
         fileName.setFont(new Font("Arial", Font.PLAIN, 20));
-        genericFileIcon.setIcon(new ImageIcon(PreloadedIcons.genericFile));
+        genericFileIcon.setIcon(FileMappings.getIconFromFilename(actionSelectionPanel.getSelectedFile()));
         northPanelBottom.add(genericFileIcon);
         northPanelBottom.add(fileName);
         northPanel.add(northPanelBottom);
