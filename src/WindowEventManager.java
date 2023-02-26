@@ -1,7 +1,13 @@
+import javax.swing.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
 public class WindowEventManager implements WindowListener {
+    MainFrame context;
+
+    public WindowEventManager(MainFrame context) {
+        this.context = context;
+    }
 
     @Override
     public void windowOpened(WindowEvent e) {
@@ -9,7 +15,10 @@ public class WindowEventManager implements WindowListener {
 
     @Override
     public void windowClosing(WindowEvent e) {
-        System.exit(0);
+        if(this.context.uploadProgressBar.size() == 0)
+            System.exit(0);
+        else
+            this.context.setExtendedState(JFrame.ICONIFIED);
     }
 
     @Override

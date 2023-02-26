@@ -20,7 +20,7 @@ public class MainFrame extends JFrame {
         setBounds(0, 0, 854, 480);
         setMinimumSize(new Dimension(854, 480));
         setLocationRelativeTo(null);
-        addWindowListener(new WindowEventManager());
+        addWindowListener(new WindowEventManager(this));
 
         // Setup manager
         CardLayout cardLayout = new CardLayout();
@@ -30,10 +30,8 @@ public class MainFrame extends JFrame {
 
         cards.add(actionSelectionPanel, "selection");
 
-        // Set listeners
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-
         // Finalize
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         getContentPane().add(cards);
         setVisible(true);
     }

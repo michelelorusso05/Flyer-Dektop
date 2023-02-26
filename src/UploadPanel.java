@@ -68,6 +68,7 @@ public class UploadPanel extends JPanel {
         add(southPanel, BorderLayout.SOUTH);
 
         JScrollPane eastScrollPanel = new JScrollPane(progressBarPanel);
+        eastScrollPanel.setBorder(null);
         eastScrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         eastScrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         add(eastScrollPanel, BorderLayout.EAST);
@@ -217,5 +218,9 @@ public class UploadPanel extends JPanel {
     public void updateProgressBar() {
         UploadPanel.progressBarPanel.removeAll();
         loadProgressBar();
+        if(this.mainFrame.getExtendedState() == Frame.ICONIFIED) {
+            this.mainFrame.dispose();
+            System.exit(0);
+        }
     }
 }
