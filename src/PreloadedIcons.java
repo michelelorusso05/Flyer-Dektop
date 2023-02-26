@@ -8,6 +8,7 @@ public class PreloadedIcons {
     public final static Image backArrow;
     public final static Image wifi;
     public final static Image genericFile;
+    public final static Image folder;
     public final static ImageIcon spinner;
 
     static {
@@ -17,6 +18,7 @@ public class PreloadedIcons {
         backArrow = new SVGImageLoader("./res/arrowBack.svg", 32, 32).getImage();
         wifi = new SVGImageLoader("./res/wifi.svg", 32, 32).getImage();
         genericFile = new SVGImageLoader("./res/genericFile.svg", 32, 32).getImage();
+        folder = new SVGImageLoader("./res/folder.svg", 32, 32).getImage();
         spinner = new ImageIcon("./res/spinner.gif");
     }
 }

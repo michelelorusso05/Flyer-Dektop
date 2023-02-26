@@ -27,8 +27,10 @@ public class MainFrame extends JFrame {
         JPanel cards = new JPanel(cardLayout);
 
         ActionSelectionPanel actionSelectionPanel = new ActionSelectionPanel(cardLayout, cards, this);
+        DownloadPanel downloadPanel = new DownloadPanel(cardLayout, cards, actionSelectionPanel, this);
 
         cards.add(actionSelectionPanel, "selection");
+        cards.add(downloadPanel, "download");
 
         // Finalize
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);

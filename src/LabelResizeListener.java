@@ -17,7 +17,7 @@ public class LabelResizeListener implements ComponentListener {
     public void componentResized(ComponentEvent e) {
         Dimension newSize = e.getComponent().getBounds().getSize();
         float size = (float)(Math.min(newSize.getWidth(), newSize.getHeight()));
-        Image image = new SVGImageLoader(this.path, size - (size / 3), size - (size / 3)).getImage();
+        Image image = new SVGImageLoader(this.path, size - (size / 2), size - (size / 2)).getImage();
         this.label.setIcon(new ImageIcon(image));
         e.getComponent().invalidate();
         e.getComponent().repaint();

@@ -24,7 +24,7 @@ public class ActionSelectionPanel extends JPanel {
         innerUploadBtnPanel.add(uploadIcon, BorderLayout.CENTER);
 
         JLabel uploadLabel = new JLabel("Invia", SwingConstants.CENTER);
-        upload.addComponentListener(new LabelResizeTextListener(uploadLabel));
+        upload.addComponentListener(new LabelResizeTextListener(uploadLabel, 6));
         innerUploadBtnPanel.add(uploadLabel, BorderLayout.SOUTH);
 
         upload.add(innerUploadBtnPanel);
@@ -51,11 +51,16 @@ public class ActionSelectionPanel extends JPanel {
         innerDownloadBtnPanel.add(downloadIcon, BorderLayout.CENTER);
 
         JLabel downloadLabel = new JLabel("Ricevi", SwingConstants.CENTER);
-        download.addComponentListener(new LabelResizeTextListener(downloadLabel));
+        download.addComponentListener(new LabelResizeTextListener(downloadLabel, 6));
         innerDownloadBtnPanel.add(downloadLabel, BorderLayout.SOUTH);
 
         download.add(innerDownloadBtnPanel);
 
+        download.addActionListener((e) -> {
+            cardLayout.show(cardsPanel, "download");
+        });
+
+        //add buttons to panel
         add(upload);
         add(download);
 
