@@ -2,11 +2,15 @@ import com.formdev.flatlaf.FlatDarkLaf;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class MainFrame extends JFrame {
+    public ArrayList<FileProgressBarPanel> uploadProgressBar;
     public MainFrame() throws HeadlessException {
         super("Flyer");
         FlatDarkLaf.setup();
+
+        this.uploadProgressBar = new ArrayList<>();
 
         UIManager.put( "Button.arc", 15 );
         UIManager.put( "Component.arc", 15 );
@@ -22,7 +26,7 @@ public class MainFrame extends JFrame {
         CardLayout cardLayout = new CardLayout();
         JPanel cards = new JPanel(cardLayout);
 
-        ActionSelectionPanel actionSelectionPanel = new ActionSelectionPanel(cardLayout, cards);
+        ActionSelectionPanel actionSelectionPanel = new ActionSelectionPanel(cardLayout, cards, this);
 
         cards.add(actionSelectionPanel, "selection");
 

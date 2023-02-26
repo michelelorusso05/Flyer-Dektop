@@ -4,20 +4,23 @@ import java.io.*;
 import java.net.*;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class UploadPanel extends JPanel {
     MulticastSocket udpSocket;
     JPanel centerPanel;
     ArrayList<DeviceButton> devices;
     ActionSelectionPanel actionSelectionPanel;
-    JPanel progressBarPanel;
-    WrapLayout progressBarWrapLayout;
-    int numRows;
-    public UploadPanel(CardLayout cardLayout, JPanel cardsPanel, ActionSelectionPanel actionSelectionPanel) {
+    static JPanel progressBarPanel;
+    static WrapLayout progressBarWrapLayout;
+    MainFrame mainFrame;
+    public UploadPanel(CardLayout cardLayout, JPanel cardsPanel, ActionSelectionPanel actionSelectionPanel, MainFrame mainFrame) {
         setLayout(new BorderLayout());
-        devices = new ArrayList<>();
+
+        this.devices = new ArrayList<>();
         this.actionSelectionPanel = actionSelectionPanel;
+        this.mainFrame = mainFrame;
+        UploadPanel.progressBarWrapLayout = new WrapLayout();
+        UploadPanel.progressBarPanel = new JPanel(progressBarWrapLayout);
 
         JPanel northPanel = new JPanel(new GridLayout(2, 1, 10, 10));
 
@@ -64,33 +67,33 @@ public class UploadPanel extends JPanel {
         southPanel.add(wifiWarning);
         add(southPanel, BorderLayout.SOUTH);
 
-        progressBarWrapLayout = new WrapLayout();
-        progressBarPanel = new JPanel(progressBarWrapLayout);
         JScrollPane eastScrollPanel = new JScrollPane(progressBarPanel);
         eastScrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         eastScrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         add(eastScrollPanel, BorderLayout.EAST);
 
+        loadProgressBar();
+        updateProgressBarUI();
         new Thread(this::listenUDP).start();
     }
     private void listenUDP() {
         try {
-            if (udpSocket != null && !udpSocket.isClosed()) {
-                udpSocket.close();
+            if (this.udpSocket != null && !this.udpSocket.isClosed()) {
+                this.udpSocket.close();
                 Thread.sleep(1000);
             }
 
-            udpSocket = new MulticastSocket(10468);
+            this.udpSocket = new MulticastSocket(10468);
             InetSocketAddress group = new InetSocketAddress(InetAddress.getByName("239.255.255.250"), 10468);
 
             for(NetworkInterface networkInterface : Host.getActiveInterfaces())
-                udpSocket.joinGroup(group, networkInterface);
+                this.udpSocket.joinGroup(group, networkInterface);
 
             DatagramPacket received = new DatagramPacket(new byte[132], 132);
 
             while (true) {
                 try {
-                    udpSocket.receive(received);
+                    this.udpSocket.receive(received);
 
                     byte[] data = received.getData();
                     String name = new String(data, 3, 128);
@@ -98,7 +101,7 @@ public class UploadPanel extends JPanel {
                     Host host = new Host(received.getAddress(), name, port, data[2]);
                     DeviceButton device = new DeviceButton(host);
                     this.addDevice(host, device);
-                    centerPanel.updateUI();
+                    this.centerPanel.updateUI();
 
                 } catch (SocketException e) {
                     System.err.println("Socket destroyed");
@@ -115,8 +118,8 @@ public class UploadPanel extends JPanel {
     }
     public void addDevice(Host found, DeviceButton device) {
         int index = -1;
-        for(int i = 0; i < devices.size(); i++) {
-            DeviceButton curr = devices.get(i);
+        for(int i = 0; i < this.devices.size(); i++) {
+            DeviceButton curr = this.devices.get(i);
             if(device.equals(curr)) {
                 index = i;
                 break;
@@ -129,16 +132,19 @@ public class UploadPanel extends JPanel {
                     TCPConnection(device.getHost());
                 }).start();
             });
-            devices.add(device);
-            centerPanel.add(device);
+            this.devices.add(device);
+            this.centerPanel.add(device);
         }
         else {
-            devices.get(index).setPort(found.getPort());
+            this.devices.get(index).setPort(found.getPort());
         }
     }
     public void TCPConnection(Host host) {
+        File file = this.actionSelectionPanel.getSelectedFile();
+        for(int i = 0; i < this.mainFrame.uploadProgressBar.size(); i++) {
+            if(file.getName().equals(this.mainFrame.uploadProgressBar.get(i).getName())) return;
+        }
         try (Socket socket = new Socket(host.getIp(), host.getPort())) {
-            File file = this.actionSelectionPanel.getSelectedFile();
             InputStream fileStream = new FileInputStream(file);
 
             int bytes;
@@ -161,37 +167,48 @@ public class UploadPanel extends JPanel {
             final long total = file.length();
             dataOutputStream.writeLong(total);
 
-
             byte[] buffer = new byte[1024 * 1024];
             final int startSize = dataOutputStream.size();
 
-            FileProgressBar fileProgressBar = new FileProgressBar(file.getName());
-            progressBarPanel.add(fileProgressBar);
-            updateProgressBarUI();
+            FileProgressBarPanel fileProgressBar = new FileProgressBarPanel(file.getName());
+            this.mainFrame.uploadProgressBar.add(fileProgressBar);
+            updateProgressBar();
 
             while ((bytes = fileStream.read(buffer)) != -1) {
                 dataOutputStream.write(buffer, 0, bytes);
                 dataOutputStream.flush();
                 final int progress = dataOutputStream.size() - startSize;
                 final int percentage = (int) ((float) progress * 100f / total);
+
                 fileProgressBar.getProgressBar().setValue(percentage);
                 updateProgressBarUI();
             }
-            progressBarPanel.remove(fileProgressBar);
-            updateProgressBarUI();
+            updateProgressBar();
             fileStream.close();
             dataOutputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
     public void updateProgressBarUI() {
-        progressBarPanel.revalidate();
-        progressBarPanel.repaint();
-        progressBarPanel.updateUI();
+        this.progressBarPanel.revalidate();
+        this.progressBarPanel.repaint();
+        this.progressBarPanel.updateUI();
         revalidate();
         repaint();
         updateUI();
+    }
+    public void loadProgressBar() {
+        for(int i = 0; i < this.mainFrame.uploadProgressBar.size(); i++) {
+            FileProgressBarPanel curr = this.mainFrame.uploadProgressBar.get(i);
+            if(curr.getProgressBar().getValue() < 100) {
+                UploadPanel.progressBarPanel.add(curr);
+            }
+        }
+        updateProgressBarUI();
+    }
+    public void updateProgressBar() {
+        UploadPanel.progressBarPanel.removeAll();
+        loadProgressBar();
     }
 }

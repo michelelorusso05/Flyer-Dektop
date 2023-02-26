@@ -1,11 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
 
-public class FileProgressBar extends JPanel{
-    private JLabel fileName;
-    private JProgressBar progressBar;
+public class FileProgressBarPanel extends JPanel{
+    private final JLabel fileName;
+    private final JProgressBar progressBar;
 
-    public FileProgressBar(String fileName) {
+    public FileProgressBarPanel(String fileName) {
         super(new BorderLayout(5, 5));
         this.fileName = new JLabel(fileName, SwingConstants.CENTER);
         this.progressBar = new JProgressBar();
@@ -14,4 +14,5 @@ public class FileProgressBar extends JPanel{
     }
 
     public JProgressBar getProgressBar(){return progressBar;}
+    public String getName() {return fileName.getText();}
 }

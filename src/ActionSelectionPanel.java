@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class ActionSelectionPanel extends JPanel {
     private File selectedFile;
-    public ActionSelectionPanel(CardLayout cardLayout, JPanel cardsPanel) {
+    public ActionSelectionPanel(CardLayout cardLayout, JPanel cardsPanel, MainFrame mainFrame) {
         SpringLayout layout = new SpringLayout();
         setLayout(layout);
 
@@ -34,7 +34,7 @@ public class ActionSelectionPanel extends JPanel {
             int returnValue = fileChooser.showOpenDialog(null);
             if (returnValue == JFileChooser.APPROVE_OPTION) {
                 this.selectedFile = fileChooser.getSelectedFile();
-                UploadPanel uploadPanel = new UploadPanel(cardLayout, cardsPanel, this);
+                UploadPanel uploadPanel = new UploadPanel(cardLayout, cardsPanel, this, mainFrame);
                 cardsPanel.add(uploadPanel, "upload");
                 cardLayout.show(cardsPanel, "upload");
             }
