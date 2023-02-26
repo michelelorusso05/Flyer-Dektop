@@ -217,5 +217,9 @@ public class UploadPanel extends JPanel {
     public void updateProgressBar() {
         UploadPanel.progressBarPanel.removeAll();
         loadProgressBar();
+        if(this.mainFrame.getExtendedState() == Frame.ICONIFIED) {
+            this.mainFrame.dispose();
+            System.exit(0);
+        }
     }
 }
