@@ -191,9 +191,9 @@ public class UploadPanel extends JPanel {
         }
     }
     public void updateProgressBarUI() {
-        this.progressBarPanel.revalidate();
-        this.progressBarPanel.repaint();
-        this.progressBarPanel.updateUI();
+        UploadPanel.progressBarPanel.revalidate();
+        UploadPanel.progressBarPanel.repaint();
+        UploadPanel.progressBarPanel.updateUI();
         revalidate();
         repaint();
         updateUI();
@@ -203,6 +203,12 @@ public class UploadPanel extends JPanel {
             FileProgressBarPanel curr = this.mainFrame.uploadProgressBar.get(i);
             if(curr.getProgressBar().getValue() < 100) {
                 UploadPanel.progressBarPanel.add(curr);
+            }
+        }
+        for(int i = this.mainFrame.uploadProgressBar.size() - 1; i >= 0; i--) {
+            FileProgressBarPanel curr = this.mainFrame.uploadProgressBar.get(i);
+            if(curr.getProgressBar().getValue() >= 100) {
+                this.mainFrame.uploadProgressBar.remove(i);
             }
         }
         updateProgressBarUI();
