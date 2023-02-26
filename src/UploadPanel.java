@@ -68,6 +68,7 @@ public class UploadPanel extends JPanel {
         add(southPanel, BorderLayout.SOUTH);
 
         JScrollPane eastScrollPanel = new JScrollPane(progressBarPanel);
+        eastScrollPanel.setBorder(null);
         eastScrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         eastScrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         add(eastScrollPanel, BorderLayout.EAST);
