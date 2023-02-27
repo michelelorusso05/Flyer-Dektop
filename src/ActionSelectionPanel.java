@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 public class ActionSelectionPanel extends JPanel {
     private File selectedFile;
+    private File selectedDirectory;
     public ActionSelectionPanel(CardLayout cardLayout, JPanel cardsPanel, MainFrame mainFrame) {
         SpringLayout layout = new SpringLayout();
         setLayout(layout);
@@ -57,7 +58,19 @@ public class ActionSelectionPanel extends JPanel {
         download.add(innerDownloadBtnPanel);
 
         download.addActionListener((e) -> {
-            cardLayout.show(cardsPanel, "download");
+            JFileChooser chooser;
+            String choosertitle = "";
+            chooser = new JFileChooser();
+            chooser.setCurrentDirectory(new java.io.File("."));
+            chooser.setDialogTitle(choosertitle);
+            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            chooser.setAcceptAllFileFilterUsed(false);
+            if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+                this.selectedDirectory = chooser.getSelectedFile();
+                DownloadPanel downloadPanel = new DownloadPanel(cardLayout, cardsPanel, this, mainFrame);
+                cardsPanel.add(downloadPanel, "download");
+                cardLayout.show(cardsPanel, "download");
+            }
         });
 
         //add buttons to panel
@@ -77,4 +90,5 @@ public class ActionSelectionPanel extends JPanel {
     }
 
     public File getSelectedFile() {return selectedFile;}
+    public File getSelectedDirectory() {return selectedDirectory;}
 }
