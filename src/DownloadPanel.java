@@ -5,7 +5,10 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.TimerTask;
 import java.util.Timer;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class DownloadPanel extends JPanel {
     ActionSelectionPanel actionSelectionPanel;
@@ -174,8 +177,8 @@ public class DownloadPanel extends JPanel {
         }
     }
     public void TCPConnection() {
-        try (Socket socket = consumeSocket()) {
-            socket.setSoTimeout(5000);
+        try (Socket socket = consumeSocket()){
+            socket.setSoTimeout(10000);
             socket.setReceiveBufferSize(1024 * 1024);
             DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
 
@@ -207,6 +210,26 @@ public class DownloadPanel extends JPanel {
             updateProgressBar();
 
             byte[] buffer = new byte[1024 * 1024];
+            Timer timeoutTimer = new Timer();
+
+            AtomicLong currProgress = new AtomicLong(0);
+            AtomicLong prevProgress = new AtomicLong(0);
+            AtomicLong currProgressCheck = new AtomicLong(0);
+            AtomicLong prevProgressCheck = new AtomicLong(0);
+            timeoutTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    currProgressCheck.set(currProgress.get());
+                    prevProgressCheck.set(prevProgress.get());
+                    try {
+                        if(currProgressCheck.get() == currProgress.get() && prevProgressCheck.get() == prevProgress.get()) {
+                            throw new IOException("read request timed out");
+                        }
+                    }catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, 1000, 5000);
             while (size > 0
                     && (bytes = dataInputStream.read(
                     buffer, 0,
@@ -214,8 +237,9 @@ public class DownloadPanel extends JPanel {
                 fileOutputStream.write(buffer, 0, bytes);
                 size -= bytes;
 
-                final long progress = total - size;
-                final int percentage = (int) ((float) progress * 100f / total);
+                prevProgress.set(currProgress.get());
+                currProgress.set(total - size);
+                final int percentage = (int) ((float) currProgress.get() * 100f / total);
                 fileProgressBar.getProgressBar().setValue(percentage);
                 updateProgressBarUI();
             }

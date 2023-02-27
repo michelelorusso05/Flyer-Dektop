@@ -29,6 +29,7 @@ public class UploadPanel extends JPanel {
         backBtn.putClientProperty( "JButton.buttonType", "roundRect" );
         backBtn.setIcon(new ImageIcon(PreloadedIcons.backArrow));
         backBtn.addActionListener((e) -> {
+            udpSocket.close();
             cardLayout.show(cardsPanel, "selection");
         });
         JLabel searchLabel = new JLabel("Ricerca in corso...");
