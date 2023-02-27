@@ -15,10 +15,14 @@ public class DownloadPanel extends JPanel {
     ServerSocket serverSocket;
     static Socket socket;
     static AtomicInteger currentPort = new AtomicInteger(0);
+    static JPanel progressBarPanel;
+    static WrapLayout progressBarWrapLayout;
     public DownloadPanel(CardLayout cardLayout, JPanel cardsPanel, ActionSelectionPanel actionSelectionPanel, MainFrame mainFrame) {
         setLayout(new BorderLayout());
         this.actionSelectionPanel = actionSelectionPanel;
         this.mainFrame = mainFrame;
+        DownloadPanel.progressBarWrapLayout = new WrapLayout();
+        DownloadPanel.progressBarPanel = new JPanel(progressBarWrapLayout);
         initSocket();
         startBeacon();
 
@@ -90,12 +94,19 @@ public class DownloadPanel extends JPanel {
         folderWarning.setFont(new Font("Arial", Font.PLAIN, 20));
         folderPanel.add(folderIcon);
         folderPanel.add(folderWarning);
-
         southPanel.add(wifiPanel);
         southPanel.add(folderPanel);
         add(southPanel, BorderLayout.SOUTH);
-    }
 
+        JScrollPane eastScrollPanel = new JScrollPane(progressBarPanel);
+        eastScrollPanel.setBorder(null);
+        eastScrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        eastScrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        add(eastScrollPanel, BorderLayout.EAST);
+
+        loadProgressBar();
+        updateProgressBarUI();
+    }
     private void initSocket() {
         try {
             serverSocket = new ServerSocket(0);
@@ -179,9 +190,7 @@ public class DownloadPanel extends JPanel {
             dataInputStream.read(mimetypeBuffer);
 
             String filename = new String(filenameBuffer);
-            String mimeType = new String(mimetypeBuffer);
 
-            System.out.println(this.actionSelectionPanel.getSelectedDirectory().toString() + File.separator + filename);
             OutputStream fileOutputStream = new FileOutputStream(
                     this.actionSelectionPanel.getSelectedDirectory().toString() + File.separator + filename
             );
@@ -189,28 +198,63 @@ public class DownloadPanel extends JPanel {
             long size = dataInputStream.readLong();
             long total = size;
 
-            System.out.println(size);
+            String progressBarFileName = filename;
+            if(progressBarFileName.length() >= 16) {
+                progressBarFileName = progressBarFileName.substring(0, 16) + "…";
+            }
+            FileProgressBarPanel fileProgressBar = new FileProgressBarPanel(progressBarFileName, null);
+            this.mainFrame.downloadProgressBar.add(fileProgressBar);
+            updateProgressBar();
 
             byte[] buffer = new byte[1024 * 1024];
-            int prevPercentage = 0;
-            long elapsedMillis = System.currentTimeMillis();
             while (size > 0
                     && (bytes = dataInputStream.read(
                     buffer, 0,
-                    (int)Math.min(buffer.length, size)))
-                    != -1) {
+                    (int)Math.min(buffer.length, size))) != -1) {
                 fileOutputStream.write(buffer, 0, bytes);
                 size -= bytes;
 
                 final long progress = total - size;
                 final int percentage = (int) ((float) progress * 100f / total);
+                fileProgressBar.getProgressBar().setValue(percentage);
+                updateProgressBarUI();
             }
-
+            updateProgressBar();
             dataInputStream.close();
             fileOutputStream.close();
-
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+    public void updateProgressBarUI() {
+        DownloadPanel.progressBarPanel.revalidate();
+        DownloadPanel.progressBarPanel.repaint();
+        DownloadPanel.progressBarPanel.updateUI();
+        revalidate();
+        repaint();
+        updateUI();
+    }
+    public void loadProgressBar() {
+        for(int i = 0; i < this.mainFrame.downloadProgressBar.size(); i++) {
+            FileProgressBarPanel curr = this.mainFrame.downloadProgressBar.get(i);
+            if(curr.getProgressBar().getValue() < 100) {
+                DownloadPanel.progressBarPanel.add(curr);
+            }
+        }
+        for(int i = this.mainFrame.downloadProgressBar.size() - 1; i >= 0; i--) {
+            FileProgressBarPanel curr = this.mainFrame.downloadProgressBar.get(i);
+            if(curr.getProgressBar().getValue() >= 100) {
+                this.mainFrame.downloadProgressBar.remove(i);
+            }
+        }
+        updateProgressBarUI();
+    }
+    public void updateProgressBar() {
+        DownloadPanel.progressBarPanel.removeAll();
+        loadProgressBar();
+        if(this.mainFrame.getExtendedState() == Frame.ICONIFIED && this.mainFrame.uploadProgressBar.size() == 0  && this.mainFrame.downloadProgressBar.size() == 0) {
+            this.mainFrame.dispose();
+            System.exit(0);
         }
     }
 }

@@ -6,12 +6,14 @@ import java.util.ArrayList;
 
 public class MainFrame extends JFrame {
     public ArrayList<FileProgressBarPanel> uploadProgressBar;
+    public ArrayList<FileProgressBarPanel> downloadProgressBar;
     public MainFrame() throws HeadlessException {
         super("Flyer");
         FlatDarkLaf.setup();
         setIconImage(PreloadedIcons.icon);
 
         this.uploadProgressBar = new ArrayList<>();
+        this.downloadProgressBar = new ArrayList<>();
 
         UIManager.put( "Button.arc", 15 );
         UIManager.put( "Component.arc", 15 );

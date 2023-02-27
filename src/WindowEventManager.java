@@ -15,7 +15,7 @@ public class WindowEventManager implements WindowListener {
 
     @Override
     public void windowClosing(WindowEvent e) {
-        if(this.context.uploadProgressBar.size() == 0)
+        if(this.context.uploadProgressBar.size() == 0 && this.context.downloadProgressBar.size() == 0)
             System.exit(0);
         else
             this.context.setExtendedState(JFrame.ICONIFIED);

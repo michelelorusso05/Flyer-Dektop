@@ -172,7 +172,11 @@ public class UploadPanel extends JPanel {
             byte[] buffer = new byte[1024 * 1024];
             final int startSize = dataOutputStream.size();
 
-            FileProgressBarPanel fileProgressBar = new FileProgressBarPanel(file.getName(), host.getIp());
+            String progressBarFileName = file.getName();
+            if(progressBarFileName.length() >= 16) {
+                progressBarFileName = progressBarFileName.substring(0, 16) + "…";
+            }
+            FileProgressBarPanel fileProgressBar = new FileProgressBarPanel(progressBarFileName, host.getIp());
             this.mainFrame.uploadProgressBar.add(fileProgressBar);
             updateProgressBar();
 
@@ -218,7 +222,7 @@ public class UploadPanel extends JPanel {
     public void updateProgressBar() {
         UploadPanel.progressBarPanel.removeAll();
         loadProgressBar();
-        if(this.mainFrame.getExtendedState() == Frame.ICONIFIED) {
+        if(this.mainFrame.getExtendedState() == Frame.ICONIFIED && this.mainFrame.uploadProgressBar.size() == 0  && this.mainFrame.downloadProgressBar.size() == 0) {
             this.mainFrame.dispose();
             System.exit(0);
         }

@@ -15,7 +15,6 @@ public class FileProgressBarPanel extends JPanel{
         add(this.fileName);
         add(this.progressBar, BorderLayout.SOUTH);
     }
-
     public JProgressBar getProgressBar(){return progressBar;}
     public String getName() {return fileName.getText();}
     public InetAddress getIp() {return ip;}
