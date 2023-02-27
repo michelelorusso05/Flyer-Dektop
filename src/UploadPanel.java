@@ -143,7 +143,8 @@ public class UploadPanel extends JPanel {
     public void TCPConnection(Host host) {
         File file = this.actionSelectionPanel.getSelectedFile();
         for(int i = 0; i < this.mainFrame.uploadProgressBar.size(); i++) {
-            if(file.getName().equals(this.mainFrame.uploadProgressBar.get(i).getName())) return;
+            FileProgressBarPanel curr = this.mainFrame.uploadProgressBar.get(i);
+            if(file.getName().equals(curr.getName()) && host.getIp().equals(curr.getIp())) return;
         }
         try (Socket socket = new Socket(host.getIp(), host.getPort())) {
             InputStream fileStream = new FileInputStream(file);
@@ -171,7 +172,7 @@ public class UploadPanel extends JPanel {
             byte[] buffer = new byte[1024 * 1024];
             final int startSize = dataOutputStream.size();
 
-            FileProgressBarPanel fileProgressBar = new FileProgressBarPanel(file.getName());
+            FileProgressBarPanel fileProgressBar = new FileProgressBarPanel(file.getName(), host.getIp());
             this.mainFrame.uploadProgressBar.add(fileProgressBar);
             updateProgressBar();
 
