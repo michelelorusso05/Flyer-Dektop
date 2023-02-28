@@ -80,25 +80,15 @@ public class DownloadPanel extends JPanel {
         add(devicePanel, BorderLayout.CENTER);
 
         //SOUTH
-        JPanel southPanel = new JPanel(new GridLayout(2, 1));
+        JPanel southPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel wifiIcon = new JLabel();
         wifiIcon.setIcon(new ImageIcon(PreloadedIcons.wifi));
 
-        JPanel wifiPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel wifiWarning = new JLabel("Questo dispositivo è ora visibile a tutti i dispositivi connessi alla tua stessa rete WiFi.");
         wifiWarning.setFont(new Font("Arial", Font.PLAIN, 20));
-        wifiPanel.add(wifiIcon);
-        wifiPanel.add(wifiWarning);
+        southPanel.add(wifiIcon);
+        southPanel.add(wifiWarning);
 
-        JPanel folderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JLabel folderIcon = new JLabel();
-        folderIcon.setIcon(new ImageIcon(PreloadedIcons.folder));
-        JLabel folderWarning = new JLabel("I file ricevuti saranno scaricati nella cartella Download.");
-        folderWarning.setFont(new Font("Arial", Font.PLAIN, 20));
-        folderPanel.add(folderIcon);
-        folderPanel.add(folderWarning);
-        southPanel.add(wifiPanel);
-        southPanel.add(folderPanel);
         add(southPanel, BorderLayout.SOUTH);
 
         JScrollPane eastScrollPanel = new JScrollPane(progressBarPanel);
