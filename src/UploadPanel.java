@@ -212,7 +212,7 @@ public class UploadPanel extends JPanel {
                         }
                     }
                 }
-            }, 1000, 3000);
+            }, 1000, 5000);
 
             while ((bytes = fileStream.read(buffer)) != -1) {
                 dataOutputStream.write(buffer, 0, bytes);

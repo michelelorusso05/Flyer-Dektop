@@ -160,7 +160,7 @@ public class DownloadPanel extends JPanel {
                             socket.send(packet);
                     } catch (IOException ignored) {}
                 }
-            }, 0, 2000);
+            }, 0, 5000);
 
         } catch (Exception e) {
             e.printStackTrace();
