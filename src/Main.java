@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.io.RandomAccessFile;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Main {
     private static File f;
@@ -13,6 +17,7 @@ public class Main {
     public static void main(String[] args) {
         try {
             f = new File("RingOnRequest.lock");
+            Runtime.getRuntime().exec("attrib +h " + f.getPath());
             // Check if the lock exist
             if (f.exists()) {
                 // if exist try to delete it
