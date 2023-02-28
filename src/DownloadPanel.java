@@ -72,7 +72,7 @@ public class DownloadPanel extends JPanel {
         }
 
         JLabel deviceIcon = new JLabel("", SwingConstants.CENTER);
-        devicePanel.addComponentListener(new LabelResizeListener("./res/windows.svg", deviceIcon));
+        devicePanel.addComponentListener(new LabelResizeListener(this.getClass().getResource("windows.svg").toString(), deviceIcon));
         devicePanel.addComponentListener(new LabelResizeTextListener(deviceName, 13));
         buttonPanel.add(deviceIcon);
 

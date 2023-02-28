@@ -97,6 +97,6 @@ public class FileMappings {
         if (found == null) {
             found = "binary.svg";
         }
-        return new ImageIcon(new SVGImageLoader("./res/fileIcons/".concat(found), 32, 32).getImage());
+        return new ImageIcon(new SVGImageLoader(FileMappings.class.getResource("fileIcons/".concat(found)).toString(), 32, 32).getImage());
     }
 }

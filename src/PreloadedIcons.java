@@ -13,14 +13,14 @@ public class PreloadedIcons {
     public final static ImageIcon spinner;
 
     static {
-        phone = new SVGImageLoader("./res/phone.svg", 72, 72).getImage();
-        tablet = new SVGImageLoader("./res/tablet.svg", 72, 72).getImage();
-        windows = new SVGImageLoader("./res/windows.svg", 72, 72).getImage();
-        backArrow = new SVGImageLoader("./res/arrowBack.svg", 32, 32).getImage();
-        wifi = new SVGImageLoader("./res/wifi.svg", 32, 32).getImage();
-        genericFile = new SVGImageLoader("./res/genericFile.svg", 32, 32).getImage();
-        folder = new SVGImageLoader("./res/folder.svg", 32, 32).getImage();
-        icon = new SVGImageLoader("./res/icon.svg", 64, 64).getImage();
-        spinner = new ImageIcon("./res/spinner.gif");
+        phone = new SVGImageLoader(PreloadedIcons.class.getResource("phone.svg").toString(), 72, 72).getImage();
+        tablet = new SVGImageLoader(PreloadedIcons.class.getResource("tablet.svg").toString(), 72, 72).getImage();
+        windows = new SVGImageLoader(PreloadedIcons.class.getResource("windows.svg").toString(), 72, 72).getImage();
+        backArrow = new SVGImageLoader(PreloadedIcons.class.getResource("arrowBack.svg").toString(), 32, 32).getImage();
+        wifi = new SVGImageLoader(PreloadedIcons.class.getResource("wifi.svg").toString(), 32, 32).getImage();
+        genericFile = new SVGImageLoader(PreloadedIcons.class.getResource("genericFile.svg").toString(), 32, 32).getImage();
+        folder = new SVGImageLoader(PreloadedIcons.class.getResource("folder.svg").toString(), 32, 32).getImage();
+        icon = new SVGImageLoader(PreloadedIcons.class.getResource("icon.svg").toString(), 64, 64).getImage();
+        spinner = new ImageIcon(PreloadedIcons.class.getResource("spinner.gif"));
     }
 }

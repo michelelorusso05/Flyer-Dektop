@@ -1,5 +1,5 @@
 <component name="libraryTable">
-  <library name="batik-all-1.16">
+  <library name="Libraries">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/Libraries/batik-all-1.16.jar!/" />
       <root url="jar://$PROJECT_DIR$/Libraries/batik-anim-1.16.jar!/" />
