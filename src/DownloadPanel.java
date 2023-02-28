@@ -228,7 +228,7 @@ public class DownloadPanel extends JPanel {
                         updateProgressBar();
                         JOptionPane.showMessageDialog(mainFrame,
                                 "Non è stato possibile ricevere il file: " + filename,
-                                "Socket TimeOut",
+                                "Socket Timeout",
                                 JOptionPane.ERROR_MESSAGE);
                         try {
                             socket.close();

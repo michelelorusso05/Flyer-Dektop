@@ -4,6 +4,9 @@ import java.io.*;
 import java.net.*;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class UploadPanel extends JPanel {
     MulticastSocket udpSocket;
@@ -181,11 +184,41 @@ public class UploadPanel extends JPanel {
             this.mainFrame.uploadProgressBar.add(fileProgressBar);
             updateProgressBar();
 
+            java.util.Timer timeoutTimer = new Timer();
+
+            AtomicLong currProgress = new AtomicLong(0);
+            AtomicLong prevProgress = new AtomicLong(1);
+            timeoutTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        if(prevProgress.get() == currProgress.get() && currProgress.get() < total) {
+                            throw new IOException("read request timed out");
+                        }else {
+                            prevProgress.set(currProgress.get());
+                        }
+                    }catch (IOException e) {
+                        mainFrame.uploadProgressBar.remove(fileProgressBar);
+                        updateProgressBar();
+                        JOptionPane.showMessageDialog(mainFrame,
+                                "Non è stato possibile inviare il file: " + file.getName(),
+                                "Socket Timeout",
+                                JOptionPane.ERROR_MESSAGE);
+                        try {
+                            socket.close();
+                            this.cancel();
+                        } catch (IOException ex) {
+                            this.cancel();
+                        }
+                    }
+                }
+            }, 1000, 3000);
+
             while ((bytes = fileStream.read(buffer)) != -1) {
                 dataOutputStream.write(buffer, 0, bytes);
                 dataOutputStream.flush();
-                final int progress = dataOutputStream.size() - startSize;
-                final int percentage = (int) ((float) progress * 100f / total);
+                currProgress.set(dataOutputStream.size() - startSize);
+                final int percentage = (int) ((float) currProgress.get() * 100f / total);
 
                 fileProgressBar.getProgressBar().setValue(percentage);
                 updateProgressBarUI();
@@ -194,7 +227,18 @@ public class UploadPanel extends JPanel {
             fileStream.close();
             dataOutputStream.close();
         } catch (IOException e) {
-            e.printStackTrace();
+
+            for(int i = devices.size() - 1; i >= 0; i--) {
+                if(devices.get(i).equals(new DeviceButton(host))) {
+                    this.centerPanel.remove(devices.get(i));
+                    devices.remove(i);
+                    updateProgressBarUI();
+                }
+            }
+            JOptionPane.showMessageDialog(mainFrame,
+                    "Non è stato possibile connettersi all'host: " + host.getName(),
+                    "Host unreachable",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
     public void updateProgressBarUI() {
