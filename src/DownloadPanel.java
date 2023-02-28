@@ -213,23 +213,32 @@ public class DownloadPanel extends JPanel {
             Timer timeoutTimer = new Timer();
 
             AtomicLong currProgress = new AtomicLong(0);
-            AtomicLong prevProgress = new AtomicLong(0);
-            AtomicLong currProgressCheck = new AtomicLong(0);
-            AtomicLong prevProgressCheck = new AtomicLong(0);
+            AtomicLong prevProgress = new AtomicLong(1);
             timeoutTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    currProgressCheck.set(currProgress.get());
-                    prevProgressCheck.set(prevProgress.get());
                     try {
-                        if(currProgressCheck.get() == currProgress.get() && prevProgressCheck.get() == prevProgress.get()) {
+                        if(prevProgress.get() == currProgress.get() && currProgress.get() < total) {
                             throw new IOException("read request timed out");
+                        }else {
+                            prevProgress.set(currProgress.get());
                         }
                     }catch (IOException e) {
-                        e.printStackTrace();
+                        mainFrame.downloadProgressBar.remove(fileProgressBar);
+                        updateProgressBar();
+                        JOptionPane.showMessageDialog(mainFrame,
+                                "Non è stato possibile ricevere il file: " + filename,
+                                "Socket TimeOut",
+                                JOptionPane.ERROR_MESSAGE);
+                        try {
+                            socket.close();
+                            this.cancel();
+                        } catch (IOException ex) {
+                            this.cancel();
+                        }
                     }
                 }
-            }, 1000, 5000);
+            }, 1000, 3000);
             while (size > 0
                     && (bytes = dataInputStream.read(
                     buffer, 0,
@@ -237,7 +246,6 @@ public class DownloadPanel extends JPanel {
                 fileOutputStream.write(buffer, 0, bytes);
                 size -= bytes;
 
-                prevProgress.set(currProgress.get());
                 currProgress.set(total - size);
                 final int percentage = (int) ((float) currProgress.get() * 100f / total);
                 fileProgressBar.getProgressBar().setValue(percentage);
@@ -247,6 +255,7 @@ public class DownloadPanel extends JPanel {
             dataInputStream.close();
             fileOutputStream.close();
         } catch (IOException e) {
+            System.err.println("Non lo chiama quando dovrebbe e lo chiami mo");
             e.printStackTrace();
         }
     }
