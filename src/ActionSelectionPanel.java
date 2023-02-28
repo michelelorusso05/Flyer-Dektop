@@ -32,6 +32,7 @@ public class ActionSelectionPanel extends JPanel {
 
         upload.addActionListener((e) -> {
             JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Selezione il file da inviare");
             int returnValue = fileChooser.showOpenDialog(null);
             if (returnValue == JFileChooser.APPROVE_OPTION) {
                 this.selectedFile = fileChooser.getSelectedFile();
@@ -58,11 +59,9 @@ public class ActionSelectionPanel extends JPanel {
         download.add(innerDownloadBtnPanel);
 
         download.addActionListener((e) -> {
-            JFileChooser chooser;
-            String choosertitle = "";
-            chooser = new JFileChooser();
+            JFileChooser chooser = new JFileChooser();
+            chooser.setDialogTitle("Seleziona la cartella dove salvare il file");
             chooser.setCurrentDirectory(new java.io.File("."));
-            chooser.setDialogTitle(choosertitle);
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             chooser.setAcceptAllFileFilterUsed(false);
             if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
