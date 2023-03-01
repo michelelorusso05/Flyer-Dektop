@@ -18,9 +18,15 @@ public class DeviceButton extends JButton {
 
         this.deviceIcon = new JLabel("", SwingConstants.CENTER);
         switch (this.host.getType()) {
-            case 0 -> deviceIcon.setIcon(new ImageIcon(PreloadedIcons.phone));
-            case 1 -> deviceIcon.setIcon(new ImageIcon(PreloadedIcons.tablet));
-            case 2 -> deviceIcon.setIcon(new ImageIcon(PreloadedIcons.windows));
+            case 0:
+                deviceIcon.setIcon(new ImageIcon(PreloadedIcons.phone));
+                break;
+            case 1:
+                deviceIcon.setIcon(new ImageIcon(PreloadedIcons.tablet));
+                break;
+            case 2:
+                deviceIcon.setIcon(new ImageIcon(PreloadedIcons.windows));
+                break;
         }
         innerPanel.add(deviceIcon, BorderLayout.CENTER);
         this.deviceNameLabel = new JLabel(deviceName, SwingConstants.CENTER);
