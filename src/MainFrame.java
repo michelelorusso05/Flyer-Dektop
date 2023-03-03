@@ -10,7 +10,7 @@ public class MainFrame extends JFrame {
     public MainFrame() throws HeadlessException {
         super("Flyer");
         FlatDarkLaf.setup();
-        setIconImage(PreloadedIcons.icon);
+        setIconImage(PreloadedIcons.icon.getImage());
 
         this.uploadProgressBar = new ArrayList<>();
         this.downloadProgressBar = new ArrayList<>();
