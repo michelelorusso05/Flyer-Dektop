@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class DownloadPanel extends JPanel {
     ActionSelectionPanel actionSelectionPanel;
     MainFrame mainFrame;
-    ArrayList<MulticastSocket> sockets;
+    static ArrayList<MulticastSocket> sockets;
     Timer beaconTimer;
     ServerSocket serverSocket;
     static Socket socket;
@@ -52,12 +52,7 @@ public class DownloadPanel extends JPanel {
                 if (beaconTimer != null) beaconTimer.cancel();
                 // Dispose of the socket
                 if (sockets != null) {
-                    byte[] toSend = PacketUtils.encapsulate(currentPort.get(), 2, 1, Host.getHostname());
-                    DatagramPacket packet = new DatagramPacket(toSend, toSend.length, group);
-                    for (MulticastSocket socket : sockets) {
-                        socket.send(packet);
-                        socket.close();
-                    }
+                    sendForgetMeMessage();
                 }
                 serverSocket.close();
             } catch (IOException ev) {
@@ -278,7 +273,20 @@ public class DownloadPanel extends JPanel {
         loadProgressBar();
         if(this.mainFrame.getExtendedState() == Frame.ICONIFIED && this.mainFrame.uploadProgressBar.size() == 0  && this.mainFrame.downloadProgressBar.size() == 0) {
             this.mainFrame.dispose();
+            try {
+                DownloadPanel.sendForgetMeMessage();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             System.exit(0);
+        }
+    }
+    public static void sendForgetMeMessage() throws IOException {
+        byte[] toSend = PacketUtils.encapsulate(currentPort.get(), 2, 1, Host.getHostname());
+        DatagramPacket packet = new DatagramPacket(toSend, toSend.length, group);
+        for (MulticastSocket socket : sockets) {
+            socket.send(packet);
+            socket.close();
         }
     }
 }
