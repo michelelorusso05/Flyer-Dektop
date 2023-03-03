@@ -13,12 +13,14 @@ public class Host {
     final private String name;
     private int port;
     final private int type;
+    final private int packetType;
 
-    public Host(InetAddress ip, String name, int port, int type) {
+    public Host(InetAddress ip, String name, int port, int type, int packetType) {
         this.ip = ip;
         this.name = name;
         this.port = port;
         this.type = type;
+        this.packetType = packetType;
     }
 
     public InetAddress getIp() {
@@ -38,6 +40,14 @@ public class Host {
     }
     public void updatePort(int newPort) {
         port = newPort;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public int getPacketType() {
+        return packetType;
     }
 
     @Override

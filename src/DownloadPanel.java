@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.net.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.TimerTask;
 import java.util.Timer;
@@ -137,11 +139,7 @@ public class DownloadPanel extends JPanel {
                 sockets.add(socket);
             }
 
-            byte[] send = new byte[132];
             String hostname = Host.getHostname();
-            send[2] = (byte)2;
-            byte[] name = hostname.substring(0, Math.min(64, hostname.length())).getBytes();
-            System.arraycopy(name, 0, send, 3, name.length);
 
             InetSocketAddress group = new InetSocketAddress(InetAddress.getByName("239.255.255.250"), 10468);
 
@@ -151,11 +149,8 @@ public class DownloadPanel extends JPanel {
                 public void run() {
                     try {
                         int portNum = currentPort.get();
-                        send[0] = (byte) ((portNum >>> 8) & 255);
-                        send[1] = (byte) (portNum & 255);
-
-                        DatagramPacket packet = new DatagramPacket(send, send.length, group);
-
+                        byte[] toSend = PacketUtils.encapsulate(portNum, 2, 0, hostname);
+                        DatagramPacket packet = new DatagramPacket(toSend, toSend.length, group);
                         for (MulticastSocket socket : sockets)
                             socket.send(packet);
                     } catch (IOException ignored) {}
@@ -184,9 +179,7 @@ public class DownloadPanel extends JPanel {
 
             String filename = new String(filenameBuffer);
 
-            OutputStream fileOutputStream = new FileOutputStream(
-                    this.actionSelectionPanel.getSelectedDirectory().toString() + File.separator + filename
-            );
+            OutputStream fileOutputStream = Files.newOutputStream(Paths.get(this.actionSelectionPanel.getSelectedDirectory().toString() + File.separator + filename));
 
             long size = dataInputStream.readLong();
             long total = size;

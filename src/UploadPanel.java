@@ -99,11 +99,7 @@ public class UploadPanel extends JPanel {
             while (true) {
                 try {
                     this.udpSocket.receive(received);
-
-                    byte[] data = received.getData();
-                    String name = new String(data, 3, 128);
-                    int port = Byte.toUnsignedInt(data[1]) + (Byte.toUnsignedInt(data[0]) << 8);
-                    Host host = new Host(received.getAddress(), name, port, data[2]);
+                    Host host = PacketUtils.deencapsulate(received);
                     DeviceButton device = new DeviceButton(host);
                     this.addDevice(host, device);
                     this.centerPanel.updateUI();
