@@ -100,9 +100,18 @@ public class UploadPanel extends JPanel {
                 try {
                     this.udpSocket.receive(received);
                     Host host = PacketUtils.deencapsulate(received);
-                    DeviceButton device = new DeviceButton(host);
-                    this.addDevice(host, device);
-                    this.centerPanel.updateUI();
+                    if(host.getPacketType() == 0) {
+                        DeviceButton device = new DeviceButton(host);
+                        this.addDevice(host, device);
+                        this.centerPanel.updateUI();
+                    }else {
+                        for(int i = devices.size() - 1; i >= 0; i--) {
+                            if(devices.get(i).getHost().equals(host)) {
+                                devices.remove(i);
+                                updateProgressBarUI();
+                            }
+                        }
+                    }
 
                 } catch (SocketException e) {
                     System.err.println("Socket destroyed");

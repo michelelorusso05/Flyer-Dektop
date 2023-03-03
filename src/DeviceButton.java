@@ -4,8 +4,8 @@ import java.awt.event.ActionListener;
 
 public class DeviceButton extends JButton {
     private final Host host;
-    private JLabel deviceIcon;
-    private JLabel deviceNameLabel;
+    private final JLabel deviceIcon;
+    private final JLabel deviceNameLabel;
     public DeviceButton(Host host) {
         this.host = host;
         String deviceName = this.host.getName();

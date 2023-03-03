@@ -22,6 +22,16 @@ public class DownloadPanel extends JPanel {
     static AtomicInteger currentPort = new AtomicInteger(0);
     static JPanel progressBarPanel;
     static WrapLayout progressBarWrapLayout;
+    static InetSocketAddress group;
+
+    static {
+        try {
+            group = new InetSocketAddress(InetAddress.getByName("239.255.255.250"), 10468);
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public DownloadPanel(CardLayout cardLayout, JPanel cardsPanel, ActionSelectionPanel actionSelectionPanel, MainFrame mainFrame) {
         setLayout(new BorderLayout());
         this.actionSelectionPanel = actionSelectionPanel;
@@ -38,14 +48,17 @@ public class DownloadPanel extends JPanel {
         backBtn.putClientProperty( "JButton.buttonType", "roundRect" );
         backBtn.setIcon(new ImageIcon(PreloadedIcons.backArrow));
         backBtn.addActionListener((e) -> {
-            if (beaconTimer != null) beaconTimer.cancel();
-            // Dispose of the socket
-            if (sockets != null) {
-                for (MulticastSocket socket : sockets) {
-                    socket.close();
-                }
-            }
             try {
+                if (beaconTimer != null) beaconTimer.cancel();
+                // Dispose of the socket
+                if (sockets != null) {
+                    byte[] toSend = PacketUtils.encapsulate(currentPort.get(), 2, 1, Host.getHostname());
+                    DatagramPacket packet = new DatagramPacket(toSend, toSend.length, group);
+                    for (MulticastSocket socket : sockets) {
+                        socket.send(packet);
+                        socket.close();
+                    }
+                }
                 serverSocket.close();
             } catch (IOException ev) {
                 throw new RuntimeException(ev);
@@ -139,17 +152,12 @@ public class DownloadPanel extends JPanel {
                 sockets.add(socket);
             }
 
-            String hostname = Host.getHostname();
-
-            InetSocketAddress group = new InetSocketAddress(InetAddress.getByName("239.255.255.250"), 10468);
-
             beaconTimer = new Timer();
             beaconTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
                     try {
-                        int portNum = currentPort.get();
-                        byte[] toSend = PacketUtils.encapsulate(portNum, 2, 0, hostname);
+                        byte[] toSend = PacketUtils.encapsulate(currentPort.get(), 2, 0, Host.getHostname());
                         DatagramPacket packet = new DatagramPacket(toSend, toSend.length, group);
                         for (MulticastSocket socket : sockets)
                             socket.send(packet);
