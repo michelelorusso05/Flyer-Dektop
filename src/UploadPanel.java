@@ -107,7 +107,6 @@ public class UploadPanel extends JPanel {
                     }else {
                         for(int i = devices.size() - 1; i >= 0; i--) {
                             if(devices.get(i).equals(new DeviceButton(host))) {
-                                System.out.println("sium");
                                 this.centerPanel.remove(devices.get(i));
                                 devices.remove(i);
                                 updateProgressBarUI();
