@@ -80,6 +80,13 @@ public class UploadPanel extends JPanel {
         loadProgressBar();
         updateProgressBarUI();
         new Thread(this::listenUDP).start();
+        Timer deleteNotRespondingDevicesTimer = new Timer();
+        deleteNotRespondingDevicesTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                deleteNotRespondigDevices();
+            }
+        }, 0, 3000);
     }
     private void listenUDP() {
         try {
@@ -143,11 +150,13 @@ public class UploadPanel extends JPanel {
                     TCPConnection(device.getHost());
                 }).start();
             });
+            device.setLastUpdate(System.currentTimeMillis());
             this.devices.add(device);
             this.centerPanel.add(device);
         }
         else {
             this.devices.get(index).setPort(found.getPort());
+            this.devices.get(index).setLastUpdate(System.currentTimeMillis());
         }
     }
     public void TCPConnection(Host host) {
@@ -276,6 +285,15 @@ public class UploadPanel extends JPanel {
         if(this.mainFrame.getExtendedState() == Frame.ICONIFIED && this.mainFrame.uploadProgressBar.size() == 0  && this.mainFrame.downloadProgressBar.size() == 0) {
             this.mainFrame.dispose();
             System.exit(0);
+        }
+    }
+    public void deleteNotRespondigDevices() {
+        for(int i = devices.size() - 1; i >= 0; i--) {
+            if(System.currentTimeMillis() - devices.get(i).getLastUpdate() > 3000) {
+                this.centerPanel.remove(devices.get(i));
+                devices.remove(devices.get(i));
+                updateProgressBarUI();
+            }
         }
     }
 }

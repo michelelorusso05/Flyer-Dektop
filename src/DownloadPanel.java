@@ -224,7 +224,7 @@ public class DownloadPanel extends JPanel {
                         }
                     }
                 }
-            }, 1000, 3000);
+            }, 1000, 1000);
             while (size > 0
                     && (bytes = dataInputStream.read(
                     buffer, 0,
@@ -284,7 +284,9 @@ public class DownloadPanel extends JPanel {
     public static void sendForgetMeMessage() throws IOException {
         byte[] toSend = PacketUtils.encapsulate(currentPort.get(), 2, 1, Host.getHostname());
         DatagramPacket packet = new DatagramPacket(toSend, toSend.length, group);
+        if(sockets == null) return;
         for (MulticastSocket socket : sockets) {
+            if(socket == null) continue;
             socket.send(packet);
             socket.close();
         }
