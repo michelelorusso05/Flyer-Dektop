@@ -155,6 +155,7 @@ public class DownloadPanel extends JPanel {
                 if(!alreadyConnected) {
                     MulticastSocket socket = new MulticastSocket();
                     socket.setNetworkInterface(networkInterface);
+                    System.out.println(networkInterface.getName());
                     socket.setTimeToLive(1);
                     sockets.add(socket);
                 }
