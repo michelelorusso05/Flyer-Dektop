@@ -86,7 +86,7 @@ public class UploadPanel extends JPanel {
             public void run() {
                 deleteNotRespondigDevices();
             }
-        }, 0, 3000);
+        }, 0, 5000);
     }
     private void listenUDP() {
         try {
@@ -289,7 +289,7 @@ public class UploadPanel extends JPanel {
     }
     public void deleteNotRespondigDevices() {
         for(int i = devices.size() - 1; i >= 0; i--) {
-            if(System.currentTimeMillis() - devices.get(i).getLastUpdate() > 3000) {
+            if(System.currentTimeMillis() - devices.get(i).getLastUpdate() > 5000) {
                 this.centerPanel.remove(devices.get(i));
                 devices.remove(devices.get(i));
                 updateProgressBarUI();

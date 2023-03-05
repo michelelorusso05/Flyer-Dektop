@@ -148,6 +148,7 @@ public class DownloadPanel extends JPanel {
                     InetAddress curr = it.nextElement();
                     if(alreadyConnectedAdresses.contains(curr)) {
                         alreadyConnected = true;
+                        System.out.println("already contained");
                         break;
                     }
                     alreadyConnectedAdresses.add(curr);
@@ -172,7 +173,7 @@ public class DownloadPanel extends JPanel {
                             socket.send(packet);
                     } catch (IOException ignored) {}
                 }
-            }, 0, 5000);
+            }, 0, 1000);
 
         } catch (Exception e) {
             e.printStackTrace();
