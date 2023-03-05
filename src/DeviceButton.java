@@ -6,6 +6,7 @@ public class DeviceButton extends JButton {
     private final Host host;
     private final JLabel deviceIcon;
     private final JLabel deviceNameLabel;
+    private long lastUpdate;
     public DeviceButton(Host host) {
         this.host = host;
         String deviceName = this.host.getName();
@@ -43,4 +44,6 @@ public class DeviceButton extends JButton {
         return (this.host.getType() == device.getHost().getType()) &&
                 (this.host.getIp().equals(device.getHost().getIp()));
     }
+    public void setLastUpdate(long millis) {this.lastUpdate = millis;}
+    public long getLastUpdate() {return lastUpdate;}
 }
