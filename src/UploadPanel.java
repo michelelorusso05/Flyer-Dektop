@@ -192,16 +192,16 @@ public class UploadPanel extends JPanel {
 
             java.util.Timer timeoutTimer = new Timer();
 
-            AtomicLong currProgress = new AtomicLong(0);
-            AtomicLong prevProgress = new AtomicLong(1);
+            AtomicLong written = new AtomicLong(0);
+            AtomicLong prevProgress = new AtomicLong(0);
             timeoutTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
                     try {
-                        if(prevProgress.get() == currProgress.get() && currProgress.get() < total) {
+                        if(prevProgress.get() == written.get() && written.get() < total) {
                             throw new IOException("read request timed out");
                         }else {
-                            prevProgress.set(currProgress.get());
+                            prevProgress.set(written.get());
                         }
                     }catch (IOException e) {
                         mainFrame.uploadProgressBar.remove(fileProgressBar);
@@ -218,13 +218,13 @@ public class UploadPanel extends JPanel {
                         }
                     }
                 }
-            }, 1000, 5000);
+            }, 1000, 10000);
 
             while ((bytes = fileStream.read(buffer)) != -1) {
                 dataOutputStream.write(buffer, 0, bytes);
                 dataOutputStream.flush();
-                currProgress.set(dataOutputStream.size() - startSize);
-                final int percentage = (int) ((float) currProgress.get() * 100f / total);
+                written.set(written.get() + bytes);
+                final int percentage = (int) ((float) written.get() * 100f / total);
 
                 fileProgressBar.getProgressBar().setValue(percentage);
                 updateProgressBarUI();

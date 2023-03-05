@@ -224,7 +224,7 @@ public class DownloadPanel extends JPanel {
                         }
                     }
                 }
-            }, 1000, 3000);
+            }, 1000, 10000);
             while (size > 0
                     && (bytes = dataInputStream.read(
                     buffer, 0,
