@@ -67,7 +67,7 @@ public class Host {
     public static ArrayList<NetworkInterface> getActiveInterfaces() throws SocketException {
         ArrayList<NetworkInterface> interfaces = new ArrayList<>();
 
-        for (Enumeration<NetworkInterface> it = NetworkInterface.getNetworkInterfaces(); it.hasMoreElements(); ) {
+        for (Enumeration<NetworkInterface> it = NetworkInterface.getNetworkInterfaces(); it.hasMoreElements();) {
             NetworkInterface networkInterface = it.nextElement();
 
             boolean valid = false;

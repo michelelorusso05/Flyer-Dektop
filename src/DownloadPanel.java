@@ -5,6 +5,7 @@ import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.TimerTask;
 import java.util.Timer;
 import java.util.concurrent.Semaphore;
@@ -139,12 +140,24 @@ public class DownloadPanel extends JPanel {
         // Create UDP station
         try {
             ArrayList<NetworkInterface> interfaces = Host.getActiveInterfaces();
+            ArrayList<InetAddress> alreadyConnectedAdresses = new ArrayList<>();
             sockets = new ArrayList<>(interfaces.size());
             for (NetworkInterface networkInterface : interfaces) {
-                MulticastSocket socket = new MulticastSocket();
-                socket.setNetworkInterface(networkInterface);
-                socket.setTimeToLive(1);
-                sockets.add(socket);
+                boolean alreadyConnected = false;
+                for(Enumeration<InetAddress> it = networkInterface.getInetAddresses(); it.hasMoreElements();) {
+                    InetAddress curr = it.nextElement();
+                    if(alreadyConnectedAdresses.contains(curr)) {
+                        alreadyConnected = true;
+                        break;
+                    }
+                    alreadyConnectedAdresses.add(curr);
+                }
+                if(!alreadyConnected) {
+                    MulticastSocket socket = new MulticastSocket();
+                    socket.setNetworkInterface(networkInterface);
+                    socket.setTimeToLive(1);
+                    sockets.add(socket);
+                }
             }
 
             beaconTimer = new Timer();
