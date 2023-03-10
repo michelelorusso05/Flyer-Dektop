@@ -9,70 +9,44 @@ public class FileMappings {
 
     static {
         mappings = new HashMap<>();
-        // Common types
 
-        mappings.put("audio/*", "audiotrack.svg");
-        mappings.put("image/*", "image.svg");
-        mappings.put("video/*", "video_file.svg");
-        mappings.put("text/*", "text_snippet.svg");
-        mappings.put("model/*", "model.svg");
-        mappings.put("application/pdf", "pdf.svg");
-
-        // Defaults
-        mappings.put("application/octet-stream", "binary.svg");
-
-        // Executables
-        mappings.put("application/x-msdos-program", "applications.svg");
-        mappings.put("application/vnd.android.package-archive", "android.svg");
-
-
-        // Compressed archive
-        putAll(new String[]{
-                "application/x-bzip",
-                "application/x-bzip2",
-                "application/gzip",
-                "application/vnd.rar",
-                "application/x-tar",
-                "application/zip",
-                "application/x-7z-compressed"
-        }, "folder_zip.svg");
-
-        // Word files
-        putAll(new String[]{
-                "application/msword",
-                "application/vnd.ms-word.document.macroenabled.12",
-                "application/vnd.ms-word.template.macroenabled.12",
-                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                "application/vnd.openxmlformats-officedocument.wordprocessingml.template"
-        }, "word.svg");
-
-        // Powerpoint files
-        putAll(new String[]{
-                "application/powerpoint",
-                "application/mspowerpoint",
-                "application/vnd.ms-powerpoint",
-                "application/vnd.ms-powerpoint.presentation.macroenabled.12",
-                "application/vnd.ms-powerpoint.slideshow.macroenabled.12",
-                "application/vnd.ms-powerpoint.template.macroenabled.12",
-                "application/vnd.ms-powerpoint.addin.macroenabled.12",
-                "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-                "application/vnd.openxmlformats-officedocument.presentationml.slideshow"
-        }, "powerpoint.svg");
-
-        // Excel files
-        putAll(new String[]{
-                "application/excel",
-                "application/x-excel",
-                "application/x-msexcel",
-                "application/vnd.ms-excel",
-                "application/vnd.ms-excel.sheet.macroenabled.12",
-                "application/vnd.ms-excel.sheet.binary.macroenabled.12",
-                "application/vnd.ms-excel.template.macroenabled.12",
-                "application/vnd.ms-excel.addin.macroenabled.12",
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.template",
-                "image/vnd.xiff"
-        }, "excel.svg");
+        putAll(new String[]{"aac", "aiff", "flac", "m4a", "m4b", "m4p", "mmf", "mp3", "ogg", "oga", "mogg", "row", "wma", "wav"}, "fileIcons/audiotrack.svg");
+        putAll(new String[]{"apng", "bmp", "gif", "ico", "jpeg", "jpg", "m4a", "png", "webp", "svg"}, "fileIcons/image.svg");
+        putAll(new String[]{"webm", "mpg", "mpeg", "mp4", "m4p", "m4v", "avi", "wmv", "mov"}, "fileIcons/videoFile.svg");
+        mappings.put("txt", "fileIcons/text_snippet.svg");
+        putAll(new String[]{"3ds", "collada", "fbx", "gltf", "glb", "obj", "blend"}, "fileIcons/model.svg");
+        putAll(new String[]{"rar", "zip", "7z", "jar"}, "fileIcons/folder_zip.svg");
+        mappings.put("asm", "fileIcons/asm_seti.svg");
+        mappings.put("c", "fileIcons/c_seti.svg");
+        mappings.put("cpp", "fileIcons/cpp_seti.svg");
+        mappings.put("cs", "fileIcons/c-sharp_seti.svg");
+        mappings.put("css", "fileIcons/css_seti.svg");
+        mappings.put("d", "fileIcons/d_seti.svg");
+        mappings.put("dart", "fileIcons/dart_seti.svg");
+        mappings.put("fs", "fileIcons/f-sharp_seti.svg");
+        mappings.put("go", "fileIcons/go2_seti.svg");
+        mappings.put("gradle", "fileIcons/gradle_seti.svg");
+        putAll(new String[]{"html", "htm"}, "fileIcons/html_seti.svg");
+        mappings.put("java", "fileIcons/java_seti.svg");
+        mappings.put("js", "fileIcons/javascript_seti.svg");
+        mappings.put("json", "fileIcons/json_seti.svg");
+        mappings.put("kt", "fileIcons/kotlin_seti.svg");
+        mappings.put("lua", "fileIcons/lua_seti.svg");
+        mappings.put("pl", "fileIcons/perl_seti.svg");
+        mappings.put("php", "fileIcons/php_seti.svg");
+        mappings.put("py", "fileIcons/python_seti.svg");
+        mappings.put("r", "fileIcons/R_seti.svg");
+        mappings.put("rb", "fileIcons/ruby_seti.svg");
+        mappings.put("rs", "fileIcons/rust_seti.svg");
+        mappings.put("swift", "fileIcons/swift_seti.svg");
+        mappings.put("ts", "fileIcons/typescript.svg");
+        putAll(new String[]{"docx", "doc"}, "fileIcons/word.svg");
+        putAll(new String[]{"pptx", "ppt"}, "fileIcons/powerpoint.svg");
+        putAll(new String[]{"xlsx", "xls"}, "fileIcons/excel.svg");
+        mappings.put("apk", "fileIcons/android.svg");
+        mappings.put("exe", "fileIcons/applications.svg");
+        mappings.put("bin", "fileIcons/binary.svg");
+        mappings.put("pdf", "fileIcons/pdf.svg");
     }
     private static void putAll(String[] types, String pathToIcon) {
         assert mappings != null;
@@ -80,23 +54,11 @@ public class FileMappings {
             mappings.put(type, pathToIcon);
     }
     public static ImageIcon getIconFromFilename(File file) {
-        String mime = null;
-        try {
-            mime = Files.probeContentType(file.toPath());
-        } catch (IOException ignored) {}
-        mime = (mime == null) ? "application/octet-stream" : mime;
-
-        String found;
-        // Specific search
-        found = mappings.get(mime);
-        // Generic search
+        String ext = file.getName().substring(file.getName().lastIndexOf('.') + 1);
+        String found = mappings.get(ext);
         if (found == null) {
-            found = mappings.get(mime.substring(0, mime.lastIndexOf('/') + 1).concat("*"));
+            found = "fileIcons/binary.svg";
         }
-        // Default (binary file)
-        if (found == null) {
-            found = "binary.svg";
-        }
-        return new ImageIcon(new SVGImageLoader(FileMappings.class.getResource("fileIcons/".concat(found)).toString(), 32, 32).getImage());
+        return new ImageIcon(new SVGImageLoader(FileMappings.class.getResource(found).toString(), 32, 32).getImage());
     }
 }

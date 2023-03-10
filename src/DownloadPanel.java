@@ -299,6 +299,7 @@ public class DownloadPanel extends JPanel {
     public static void sendForgetMeMessage() throws IOException {
         byte[] toSend = PacketUtils.encapsulate(currentPort.get(), 2, 1, Host.getHostname());
         DatagramPacket packet = new DatagramPacket(toSend, toSend.length, group);
+        if(sockets == null) return;
         for (MulticastSocket socket : sockets) {
             socket.send(packet);
             socket.close();
