@@ -108,6 +108,9 @@ public class DownloadPanel extends JPanel {
         eastScrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         add(eastScrollPanel, BorderLayout.EAST);
 
+        FileProgressBarPanel fileProgressBar = new FileProgressBarPanel("test test test test", null);
+        this.mainFrame.downloadProgressBar.add(fileProgressBar);
+
         loadProgressBar();
         updateProgressBarUI();
     }
@@ -139,29 +142,6 @@ public class DownloadPanel extends JPanel {
     private void startBeacon() {
         // Create UDP station
         try {
-            ArrayList<NetworkInterface> interfaces = Host.getActiveInterfaces();
-            ArrayList<InetAddress> alreadyConnectedAdresses = new ArrayList<>();
-            sockets = new ArrayList<>(interfaces.size());
-            for (NetworkInterface networkInterface : interfaces) {
-                boolean alreadyConnected = false;
-                for(Enumeration<InetAddress> it = networkInterface.getInetAddresses(); it.hasMoreElements();) {
-                    InetAddress curr = it.nextElement();
-                    if(alreadyConnectedAdresses.contains(curr)) {
-                        alreadyConnected = true;
-                        System.out.println("already contained");
-                        break;
-                    }
-                    alreadyConnectedAdresses.add(curr);
-                }
-                if(!alreadyConnected) {
-                    MulticastSocket socket = new MulticastSocket();
-                    socket.setNetworkInterface(networkInterface);
-                    System.out.println(networkInterface.getName());
-                    socket.setTimeToLive(1);
-                    sockets.add(socket);
-                }
-            }
-
             beaconTimer = new Timer();
             beaconTimer.schedule(new TimerTask() {
                 @Override
