@@ -11,6 +11,7 @@ public class PreloadedIcons {
     public final static Image folder;
     public final static ImageIcon icon;
     public final static ImageIcon spinner;
+    public final static Image close;
 
     static {
         phone = new SVGImageLoader(PreloadedIcons.class.getResource("phone.svg").toString(), 72, 72).getImage();
@@ -22,5 +23,6 @@ public class PreloadedIcons {
         folder = new SVGImageLoader(PreloadedIcons.class.getResource("folder.svg").toString(), 32, 32).getImage();
         icon = new ImageIcon(PreloadedIcons.class.getResource("icon.png"));
         spinner = new ImageIcon(PreloadedIcons.class.getResource("spinner.gif"));
+        close = new SVGImageLoader(PreloadedIcons.class.getResource("close.svg").toString(), 8, 8).getImage();
     }
 }

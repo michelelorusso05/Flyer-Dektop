@@ -13,7 +13,13 @@ public class FileProgressBarPanel extends JPanel{
         this.progressBar = new JProgressBar();
         this.ip = ip;
         add(this.fileName);
-        add(this.progressBar, BorderLayout.SOUTH);
+
+        JPanel southPanel = new JPanel(new FlowLayout());
+        JButton closeButton = new JButton();
+        closeButton.setIcon(new ImageIcon(PreloadedIcons.close));
+        southPanel.add(this.progressBar, BorderLayout.SOUTH);
+        southPanel.add(closeButton);
+        add(southPanel, BorderLayout.SOUTH);
     }
     public JProgressBar getProgressBar(){return progressBar;}
     public String getName() {return fileName.getText();}
