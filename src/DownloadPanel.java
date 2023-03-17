@@ -15,6 +15,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class DownloadPanel extends JPanel {
     ActionSelectionPanel actionSelectionPanel;
+    Timer updateProgressBarTimer = new Timer();
     MainFrame mainFrame;
     static ArrayList<MulticastSocket> sockets;
     Timer beaconTimer;
@@ -41,6 +42,18 @@ public class DownloadPanel extends JPanel {
         DownloadPanel.progressBarPanel = new JPanel(progressBarWrapLayout);
         initSocket();
         startBeacon();
+        updateProgressBarTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if(mainFrame.downloadProgressBar.size() > 0) {
+                    for(int i = mainFrame.downloadProgressBar.size() - 1; i >= 0; i--) {
+                        if(mainFrame.downloadProgressBar.get(i).getNeedUpdate()) {
+                            updateProgressBar();
+                        }
+                    }
+                }
+            }
+        }, 0, 10);
 
         //NORTH
         JPanel northPanel = new JPanel(new GridLayout(2, 1, 10, 10));
@@ -56,6 +69,7 @@ public class DownloadPanel extends JPanel {
                     sendForgetMeMessage();
                 }
                 serverSocket.close();
+                updateProgressBarTimer.cancel();
             } catch (IOException ev) {
                 throw new RuntimeException(ev);
             }
@@ -107,9 +121,6 @@ public class DownloadPanel extends JPanel {
         eastScrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         eastScrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         add(eastScrollPanel, BorderLayout.EAST);
-
-        FileProgressBarPanel fileProgressBar = new FileProgressBarPanel("test test test test", null);
-        this.mainFrame.downloadProgressBar.add(fileProgressBar);
 
         loadProgressBar();
         updateProgressBarUI();
@@ -259,13 +270,13 @@ public class DownloadPanel extends JPanel {
     public void loadProgressBar() {
         for(int i = 0; i < this.mainFrame.downloadProgressBar.size(); i++) {
             FileProgressBarPanel curr = this.mainFrame.downloadProgressBar.get(i);
-            if(curr.getProgressBar().getValue() < 100) {
+            if(!curr.getIsClosed()) {
                 DownloadPanel.progressBarPanel.add(curr);
             }
         }
         for(int i = this.mainFrame.downloadProgressBar.size() - 1; i >= 0; i--) {
             FileProgressBarPanel curr = this.mainFrame.downloadProgressBar.get(i);
-            if(curr.getProgressBar().getValue() >= 100) {
+            if(curr.getIsClosed()) {
                 this.mainFrame.downloadProgressBar.remove(i);
             }
         }
