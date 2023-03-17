@@ -16,7 +16,7 @@ public class WindowEventManager implements WindowListener {
 
     @Override
     public void windowClosing(WindowEvent e) {
-        if(this.context.uploadProgressBar.size() == 0 && this.context.downloadProgressBar.size() == 0){
+        if(this.context.uploadProgressBar.size() == 0 && this.context.downloadProgressBar.size() == 0) {
             try {
                 DownloadPanel.sendForgetMeMessage();
             } catch (IOException ex) {
@@ -24,8 +24,27 @@ public class WindowEventManager implements WindowListener {
             }
             System.exit(0);
         }
-        else
+
+        for(int i = 0; i < this.context.uploadProgressBar.size(); i++) {
+            FileProgressBarPanel curr = this.context.uploadProgressBar.get(i);
+            if(curr.getProgressBar().getValue() == 100 || curr.getIsFailed()) continue;
             this.context.setExtendedState(JFrame.ICONIFIED);
+            return;
+        }
+        for(int i = 0; i < this.context.downloadProgressBar.size(); i++) {
+            FileProgressBarPanel curr = this.context.downloadProgressBar.get(i);
+            if(curr.getProgressBar().getValue() == 100 || curr.getIsFailed()) continue;
+            this.context.setExtendedState(JFrame.ICONIFIED);
+            return;
+        }
+
+        try {
+            DownloadPanel.sendForgetMeMessage();
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        System.exit(0);
+
     }
 
     @Override

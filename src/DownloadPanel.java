@@ -224,7 +224,7 @@ public class DownloadPanel extends JPanel {
                             prevProgress.set(currProgress.get());
                         }
                     }catch (IOException e) {
-                        mainFrame.downloadProgressBar.remove(fileProgressBar);
+                        fileProgressBar.setFailed();
                         updateProgressBar();
                         JOptionPane.showMessageDialog(mainFrame,
                                 "Non è stato possibile ricevere il file: " + filename,
@@ -251,11 +251,12 @@ public class DownloadPanel extends JPanel {
                 fileProgressBar.getProgressBar().setValue(percentage);
                 updateProgressBarUI();
             }
+            fileProgressBar.setCompleted();
             updateProgressBar();
             dataInputStream.close();
             fileOutputStream.close();
         } catch (IOException e) {
-            System.err.println("Non lo chiama quando dovrebbe e lo chiami mo");
+            System.err.println("Socket timeout");
             e.printStackTrace();
         }
     }
@@ -294,12 +295,32 @@ public class DownloadPanel extends JPanel {
             }
             System.exit(0);
         }
+        if(this.mainFrame.getExtendedState() == Frame.ICONIFIED) {
+            for(int i = 0; i < this.mainFrame.uploadProgressBar.size(); i++) {
+                FileProgressBarPanel curr = this.mainFrame.uploadProgressBar.get(i);
+                if(curr.getProgressBar().getValue() == 100 || curr.getIsFailed()) continue;
+                return;
+            }
+            for(int i = 0; i < this.mainFrame.downloadProgressBar.size(); i++) {
+                FileProgressBarPanel curr = this.mainFrame.downloadProgressBar.get(i);
+                if(curr.getProgressBar().getValue() == 100 || curr.getIsFailed()) continue;
+                return;
+            }
+            this.mainFrame.dispose();
+            try {
+                DownloadPanel.sendForgetMeMessage();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            System.exit(0);
+        }
     }
     public static void sendForgetMeMessage() throws IOException {
         byte[] toSend = PacketUtils.encapsulate(currentPort.get(), 2, 1, Host.getHostname());
         DatagramPacket packet = new DatagramPacket(toSend, toSend.length, group);
         if(sockets == null) return;
         for (MulticastSocket socket : sockets) {
+            if(socket.isClosed()) continue;
             socket.send(packet);
             socket.close();
         }

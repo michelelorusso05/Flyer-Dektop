@@ -9,6 +9,7 @@ import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class UploadPanel extends JPanel {
+    Timer updateProgressBarTimer = new Timer();
     MulticastSocket udpSocket;
     JPanel centerPanel;
     ArrayList<DeviceButton> devices;
@@ -25,6 +26,19 @@ public class UploadPanel extends JPanel {
         UploadPanel.progressBarWrapLayout = new WrapLayout();
         UploadPanel.progressBarPanel = new JPanel(progressBarWrapLayout);
 
+        updateProgressBarTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if(mainFrame.uploadProgressBar.size() > 0) {
+                    for(int i = mainFrame.uploadProgressBar.size() - 1; i >= 0; i--) {
+                        if(mainFrame.uploadProgressBar.get(i).getNeedUpdate()) {
+                            updateProgressBar();
+                        }
+                    }
+                }
+            }
+        }, 0, 10);
+
         JPanel northPanel = new JPanel(new GridLayout(2, 1, 10, 10));
 
         JPanel northPanelTop = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -33,6 +47,7 @@ public class UploadPanel extends JPanel {
         backBtn.setIcon(new ImageIcon(PreloadedIcons.backArrow));
         backBtn.addActionListener((e) -> {
             udpSocket.close();
+            updateProgressBarTimer.cancel();
             cardLayout.show(cardsPanel, "selection");
         });
         JLabel searchLabel = new JLabel("Ricerca in corso...");
@@ -213,7 +228,7 @@ public class UploadPanel extends JPanel {
                             prevProgress.set(written.get());
                         }
                     }catch (IOException e) {
-                        mainFrame.uploadProgressBar.remove(fileProgressBar);
+                        fileProgressBar.setFailed();
                         updateProgressBar();
                         JOptionPane.showMessageDialog(mainFrame,
                                 "Non è stato possibile inviare il file: " + file.getName(),
@@ -238,6 +253,7 @@ public class UploadPanel extends JPanel {
                 fileProgressBar.getProgressBar().setValue(percentage);
                 updateProgressBarUI();
             }
+            fileProgressBar.setCompleted();
             updateProgressBar();
             fileStream.close();
             dataOutputStream.close();
@@ -267,13 +283,13 @@ public class UploadPanel extends JPanel {
     public void loadProgressBar() {
         for(int i = 0; i < this.mainFrame.uploadProgressBar.size(); i++) {
             FileProgressBarPanel curr = this.mainFrame.uploadProgressBar.get(i);
-            if(curr.getProgressBar().getValue() < 100) {
+            if(!curr.getIsClosed()) {
                 UploadPanel.progressBarPanel.add(curr);
             }
         }
         for(int i = this.mainFrame.uploadProgressBar.size() - 1; i >= 0; i--) {
             FileProgressBarPanel curr = this.mainFrame.uploadProgressBar.get(i);
-            if(curr.getProgressBar().getValue() >= 100) {
+            if(curr.getIsClosed()) {
                 this.mainFrame.uploadProgressBar.remove(i);
             }
         }
@@ -283,6 +299,20 @@ public class UploadPanel extends JPanel {
         UploadPanel.progressBarPanel.removeAll();
         loadProgressBar();
         if(this.mainFrame.getExtendedState() == Frame.ICONIFIED && this.mainFrame.uploadProgressBar.size() == 0  && this.mainFrame.downloadProgressBar.size() == 0) {
+            this.mainFrame.dispose();
+            System.exit(0);
+        }
+        if(this.mainFrame.getExtendedState() == Frame.ICONIFIED) {
+            for(int i = 0; i < this.mainFrame.uploadProgressBar.size(); i++) {
+                FileProgressBarPanel curr = this.mainFrame.uploadProgressBar.get(i);
+                if(curr.getProgressBar().getValue() == 100 || curr.getIsFailed()) continue;
+                return;
+            }
+            for(int i = 0; i < this.mainFrame.downloadProgressBar.size(); i++) {
+                FileProgressBarPanel curr = this.mainFrame.downloadProgressBar.get(i);
+                if(curr.getProgressBar().getValue() == 100 || curr.getIsFailed()) continue;
+                return;
+            }
             this.mainFrame.dispose();
             System.exit(0);
         }
