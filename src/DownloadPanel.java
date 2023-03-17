@@ -142,6 +142,14 @@ public class DownloadPanel extends JPanel {
     private void startBeacon() {
         // Create UDP station
         try {
+            ArrayList<NetworkInterface> interfaces = Host.getActiveInterfaces();
+            sockets = new ArrayList<>(interfaces.size());
+            for (NetworkInterface networkInterface : interfaces) {
+                MulticastSocket socket = new MulticastSocket();
+                socket.setNetworkInterface(networkInterface);
+                socket.setTimeToLive(1);
+                sockets.add(socket);
+            }
             beaconTimer = new Timer();
             beaconTimer.schedule(new TimerTask() {
                 @Override
