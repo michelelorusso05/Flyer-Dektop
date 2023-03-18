@@ -27,13 +27,13 @@ public class WindowEventManager implements WindowListener {
 
         for(int i = 0; i < this.context.uploadProgressBar.size(); i++) {
             FileProgressBarPanel curr = this.context.uploadProgressBar.get(i);
-            if(curr.getProgressBar().getValue() == 100 || curr.getIsFailed()) continue;
+            if(curr.getProgressBar().getValue() == 100 || curr.getIsFailed() || curr.getIsCanceled()) continue;
             this.context.setExtendedState(JFrame.ICONIFIED);
             return;
         }
         for(int i = 0; i < this.context.downloadProgressBar.size(); i++) {
             FileProgressBarPanel curr = this.context.downloadProgressBar.get(i);
-            if(curr.getProgressBar().getValue() == 100 || curr.getIsFailed()) continue;
+            if(curr.getProgressBar().getValue() == 100 || curr.getIsFailed() || curr.getIsCanceled()) continue;
             this.context.setExtendedState(JFrame.ICONIFIED);
             return;
         }

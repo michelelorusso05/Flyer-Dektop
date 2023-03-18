@@ -3,6 +3,7 @@ import java.awt.*;
 import java.io.*;
 import java.net.*;
 import java.nio.file.Files;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -32,7 +33,7 @@ public class UploadPanel extends JPanel {
                 if(mainFrame.uploadProgressBar.size() > 0) {
                     for(int i = mainFrame.uploadProgressBar.size() - 1; i >= 0; i--) {
                         if(mainFrame.uploadProgressBar.get(i).getNeedUpdate()) {
-                            System.out.println("updated");
+                            mainFrame.uploadProgressBar.get(i).setNeedUpdate(false);
                             updateProgressBar();
                         }
                     }
@@ -181,6 +182,7 @@ public class UploadPanel extends JPanel {
             FileProgressBarPanel curr = this.mainFrame.uploadProgressBar.get(i);
             if(file.getName().equals(curr.getName()) && host.getIp().equals(curr.getIp())) return;
         }
+        FileProgressBarPanel currProgressBar = null;
         try (Socket socket = new Socket(host.getIp(), host.getPort())) {
             InputStream fileStream = Files.newInputStream(file.toPath());
 
@@ -207,11 +209,8 @@ public class UploadPanel extends JPanel {
             byte[] buffer = new byte[1024 * 1024];
             final int startSize = dataOutputStream.size();
 
-            String progressBarFileName = file.getName();
-            if(progressBarFileName.length() >= 16) {
-                progressBarFileName = progressBarFileName.substring(0, 16) + "…";
-            }
-            FileProgressBarPanel fileProgressBar = new FileProgressBarPanel(progressBarFileName, host.getIp());
+            FileProgressBarPanel fileProgressBar = new FileProgressBarPanel(file.getName(), host.getIp(), socket);
+            currProgressBar = fileProgressBar;
             this.mainFrame.uploadProgressBar.add(fileProgressBar);
             updateProgressBar();
 
@@ -222,6 +221,7 @@ public class UploadPanel extends JPanel {
             timeoutTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
+                    if(fileProgressBar.getIsCanceled()) return;
                     try {
                         if(prevProgress.get() == written.get() && written.get() < total) {
                             throw new IOException("read request timed out");
@@ -245,11 +245,26 @@ public class UploadPanel extends JPanel {
                 }
             }, 1000, 10000);
 
+            long startTime = System.currentTimeMillis();
+            long acc = 0;
             while ((bytes = fileStream.read(buffer)) != -1) {
                 dataOutputStream.write(buffer, 0, bytes);
                 dataOutputStream.flush();
                 written.set(written.get() + bytes);
                 final int percentage = (int) ((float) written.get() * 100f / total);
+                acc += bytes;
+
+                if(System.currentTimeMillis() - startTime >= 1000) {
+                    float speed = (float)acc / 1000;
+                    DecimalFormat decimalFormat = new DecimalFormat("#.##");
+                    String speedText = speed > 1000 ?
+                            decimalFormat.format((speed / 1000)) + "MB/s" :
+                            decimalFormat.format(speed) + "kB/s";
+                    currProgressBar.setTransferSpeed(speedText);
+                    updateProgressBar();
+                    acc = 0;
+                    startTime = System.currentTimeMillis();
+                }
 
                 fileProgressBar.getProgressBar().setValue(percentage);
                 updateProgressBarUI();
@@ -260,7 +275,9 @@ public class UploadPanel extends JPanel {
             fileStream.close();
             dataOutputStream.close();
         } catch (IOException e) {
-
+            if(currProgressBar != null) {
+                if(currProgressBar.getIsCanceled() || currProgressBar.getIsFailed()) return;
+            }
             for(int i = devices.size() - 1; i >= 0; i--) {
                 if(devices.get(i).equals(new DeviceButton(host))) {
                     this.centerPanel.remove(devices.get(i));
@@ -307,12 +324,12 @@ public class UploadPanel extends JPanel {
         if(this.mainFrame.getExtendedState() == Frame.ICONIFIED) {
             for(int i = 0; i < this.mainFrame.uploadProgressBar.size(); i++) {
                 FileProgressBarPanel curr = this.mainFrame.uploadProgressBar.get(i);
-                if(curr.getProgressBar().getValue() == 100 || curr.getIsFailed()) continue;
+                if(curr.getProgressBar().getValue() == 100 || curr.getIsFailed() || curr.getIsCanceled()) continue;
                 return;
             }
             for(int i = 0; i < this.mainFrame.downloadProgressBar.size(); i++) {
                 FileProgressBarPanel curr = this.mainFrame.downloadProgressBar.get(i);
-                if(curr.getProgressBar().getValue() == 100 || curr.getIsFailed()) continue;
+                if(curr.getProgressBar().getValue() == 100 || curr.getIsFailed() || curr.getIsCanceled()) continue;
                 return;
             }
             this.mainFrame.dispose();
