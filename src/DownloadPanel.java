@@ -251,6 +251,7 @@ public class DownloadPanel extends JPanel {
                 fileProgressBar.getProgressBar().setValue(percentage);
                 updateProgressBarUI();
             }
+            fileProgressBar.getProgressBar().setValue(100);
             fileProgressBar.setCompleted();
             updateProgressBar();
             dataInputStream.close();

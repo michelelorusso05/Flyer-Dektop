@@ -32,6 +32,7 @@ public class UploadPanel extends JPanel {
                 if(mainFrame.uploadProgressBar.size() > 0) {
                     for(int i = mainFrame.uploadProgressBar.size() - 1; i >= 0; i--) {
                         if(mainFrame.uploadProgressBar.get(i).getNeedUpdate()) {
+                            System.out.println("updated");
                             updateProgressBar();
                         }
                     }
@@ -181,7 +182,7 @@ public class UploadPanel extends JPanel {
             if(file.getName().equals(curr.getName()) && host.getIp().equals(curr.getIp())) return;
         }
         try (Socket socket = new Socket(host.getIp(), host.getPort())) {
-            InputStream fileStream = new FileInputStream(file);
+            InputStream fileStream = Files.newInputStream(file.toPath());
 
             int bytes;
             socket.setSendBufferSize(1024 * 1024);
@@ -253,6 +254,7 @@ public class UploadPanel extends JPanel {
                 fileProgressBar.getProgressBar().setValue(percentage);
                 updateProgressBarUI();
             }
+            fileProgressBar.getProgressBar().setValue(100);
             fileProgressBar.setCompleted();
             updateProgressBar();
             fileStream.close();
