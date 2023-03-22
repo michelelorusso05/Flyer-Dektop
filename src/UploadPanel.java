@@ -277,6 +277,10 @@ public class UploadPanel extends JPanel {
         } catch (IOException e) {
             if(currProgressBar != null) {
                 if(currProgressBar.getIsCanceled() || currProgressBar.getIsFailed()) return;
+                if(currProgressBar.getProgressBar().getValue() < 100) {
+                    currProgressBar.setCanceled();
+                    return;
+                }
             }
             for(int i = devices.size() - 1; i >= 0; i--) {
                 if(devices.get(i).equals(new DeviceButton(host))) {

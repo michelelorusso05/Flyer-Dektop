@@ -256,7 +256,7 @@ public class DownloadPanel extends JPanel {
 
                 if(System.currentTimeMillis() - startTime >= 1000) {
                     float speed = (float)acc / 1000;
-                    DecimalFormat decimalFormat = new DecimalFormat("#.##");
+                    DecimalFormat decimalFormat = new DecimalFormat("0.00");
                     String speedText = speed > 1000 ?
                             decimalFormat.format((speed / 1000)) + "MB/s" :
                             decimalFormat.format(speed) + "kB/s";
