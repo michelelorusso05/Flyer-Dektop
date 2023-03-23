@@ -13,7 +13,13 @@ import java.util.ArrayList;
 public class ActionSelectionPanel extends JPanel {
     private File selectedFile;
     private File selectedDirectory;
-    private ActionSelectionPanel actionSelectionPanel;
+    private final ActionSelectionPanel actionSelectionPanel;
+
+    private static JLabel uploadLabel;
+    private static JLabel downloadLabel;
+    private static String uploadFileChooserText = "Selezione il file da inviare";
+    private static String downloadDirectoryChooserText = "Seleziona la cartella dove salvare il file";
+
     public ActionSelectionPanel(CardLayout cardLayout, JPanel cardsPanel, MainFrame mainFrame) {
         SpringLayout layout = new SpringLayout();
         setLayout(layout);
@@ -29,7 +35,7 @@ public class ActionSelectionPanel extends JPanel {
         upload.addComponentListener(new LabelResizeListener(this.getClass().getResource("upload.svg").toString(), uploadIcon));
         innerUploadBtnPanel.add(uploadIcon, BorderLayout.CENTER);
 
-        JLabel uploadLabel = new JLabel("Invia", SwingConstants.CENTER);
+        uploadLabel = new JLabel("Invia", SwingConstants.CENTER);
         upload.addComponentListener(new LabelResizeTextListener(uploadLabel, 6));
         innerUploadBtnPanel.add(uploadLabel, BorderLayout.SOUTH);
 
@@ -37,7 +43,7 @@ public class ActionSelectionPanel extends JPanel {
 
         upload.addActionListener((e) -> {
             JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle("Selezione il file da inviare");
+            fileChooser.setDialogTitle(uploadFileChooserText);
             int returnValue = fileChooser.showOpenDialog(null);
             if (returnValue == JFileChooser.APPROVE_OPTION) {
                 this.selectedFile = fileChooser.getSelectedFile();
@@ -57,7 +63,7 @@ public class ActionSelectionPanel extends JPanel {
         download.addComponentListener(new LabelResizeListener(this.getClass().getResource("download.svg").toString(), downloadIcon));
         innerDownloadBtnPanel.add(downloadIcon, BorderLayout.CENTER);
 
-        JLabel downloadLabel = new JLabel("Ricevi", SwingConstants.CENTER);
+        downloadLabel = new JLabel("Ricevi", SwingConstants.CENTER);
         download.addComponentListener(new LabelResizeTextListener(downloadLabel, 6));
         innerDownloadBtnPanel.add(downloadLabel, BorderLayout.SOUTH);
 
@@ -65,7 +71,7 @@ public class ActionSelectionPanel extends JPanel {
 
         download.addActionListener((e) -> {
             JFileChooser chooser = new JFileChooser();
-            chooser.setDialogTitle("Seleziona la cartella dove salvare il file");
+            chooser.setDialogTitle(downloadDirectoryChooserText);
             chooser.setCurrentDirectory(new java.io.File("."));
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             chooser.setAcceptAllFileFilterUsed(false);
@@ -110,4 +116,20 @@ public class ActionSelectionPanel extends JPanel {
 
     public File getSelectedFile() {return selectedFile;}
     public File getSelectedDirectory() {return selectedDirectory;}
+
+    public static void changeLanguage() {
+        if(uploadLabel == null) return;
+        if(MainFrame.language.equals("English")) {
+            uploadLabel.setText("Send");
+            downloadLabel.setText("Receive");
+            uploadFileChooserText = "Select the file to send";
+            downloadDirectoryChooserText = "Select the folder where to save the file";
+        }
+        if(MainFrame.language.equals("Italian")) {
+            uploadLabel.setText("Invia");
+            downloadLabel.setText("Ricevi");
+            uploadFileChooserText = "Selezione il file da inviare";
+            downloadDirectoryChooserText = "Seleziona la cartella dove salvare il file";
+        }
+    }
 }

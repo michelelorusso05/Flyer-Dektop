@@ -1,6 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -15,12 +18,28 @@ public class FileProgressBarPanel extends JPanel{
     private final JLabel completed;
     private final JLabel failed;
     private final JLabel canceled;
-    private JLabel transferSpeed = new JLabel("0kB/s");
+    private final JLabel transferSpeed = new JLabel("0kB/s");
     private boolean isFailed = false;
     private boolean isCanceled = false;
+    private boolean isCompleted = false;
 
-    public FileProgressBarPanel(String fileName, InetAddress ip, Socket socket) {
+    public FileProgressBarPanel(String path, String fileName, InetAddress ip, Socket socket, boolean isDownload) {
         super(new BorderLayout(5, 5));
+        if(isDownload)
+            setCursor(new Cursor(Cursor.HAND_CURSOR));
+        addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent me) {
+                Desktop desktop = Desktop.getDesktop();
+                if(isDownload && isCompleted && !isFailed && !isCanceled) {
+                    try {
+                        desktop.open(new File(path + File.separator + actualFileName));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        });
+
         this.actualFileName = fileName;
         JPanel centerPanel = new JPanel(new WrapLayout(FlowLayout.CENTER));
         String currFileName = fileName;
@@ -66,6 +85,8 @@ public class FileProgressBarPanel extends JPanel{
         southPanel.add(this.canceled);
         southPanel.add(closeButton);
         add(southPanel, BorderLayout.SOUTH);
+
+        changeLanguage();
     }
     public JProgressBar getProgressBar(){return progressBar;}
     public String getName() {return actualFileName;}
@@ -77,6 +98,7 @@ public class FileProgressBarPanel extends JPanel{
         this.progressBar.setVisible(false);
         this.transferSpeed.setVisible(false);
         this.completed.setVisible(true);
+        this.isCompleted = true;
     }
     public void setFailed() {
         this.progressBar.setVisible(false);
@@ -92,5 +114,18 @@ public class FileProgressBarPanel extends JPanel{
     }
     public boolean getIsFailed(){return isFailed;}
     public boolean getIsCanceled(){return isCanceled;}
+    public boolean getIsCompleted() {return isCompleted;}
     public void setTransferSpeed(String speed) {this.transferSpeed.setText(speed);}
+    public  void changeLanguage() {
+        if(MainFrame.language.equals("English")) {
+            this.completed.setText("Operation completed");
+            this.failed.setText("Operation failed");
+            this.canceled.setText("Operation cancelled");
+        }
+        if(MainFrame.language.equals("Italian")) {
+            this.completed.setText("Operazione completata");
+            this.failed.setText("Operazione non riuscita");
+            this.canceled.setText("Operazione annullata");
+        }
+    }
 }

@@ -17,10 +17,15 @@ public class UploadPanel extends JPanel {
     ActionSelectionPanel actionSelectionPanel;
     static JPanel progressBarPanel;
     static WrapLayout progressBarWrapLayout;
+
+    private static JLabel wifiWarning;
+    private static JLabel searchLabel;
+    private static String fileSendErrorString = "Non è stato possibile inviare il file: ";
+    private static String hostUnreachableError = "Non è stato possibile connettersi all'host: ";
+
     MainFrame mainFrame;
     public UploadPanel(CardLayout cardLayout, JPanel cardsPanel, ActionSelectionPanel actionSelectionPanel, MainFrame mainFrame) {
         setLayout(new BorderLayout());
-
         this.devices = new ArrayList<>();
         this.actionSelectionPanel = actionSelectionPanel;
         this.mainFrame = mainFrame;
@@ -52,7 +57,7 @@ public class UploadPanel extends JPanel {
             updateProgressBarTimer.cancel();
             cardLayout.show(cardsPanel, "selection");
         });
-        JLabel searchLabel = new JLabel("Ricerca in corso...");
+        searchLabel = new JLabel("Ricerca in corso...");
         searchLabel.setFont(new Font("Arial", Font.PLAIN, 20));
         JLabel spinner = new JLabel();
         spinner.setIcon(PreloadedIcons.spinner);
@@ -82,7 +87,7 @@ public class UploadPanel extends JPanel {
         JPanel southPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
         JLabel wifiIcon = new JLabel();
         wifiIcon.setIcon(new ImageIcon(PreloadedIcons.wifi));
-        JLabel wifiWarning = new JLabel("Assicurati che il dispositivo ricevente sia connesso alla tua stessa rete WiFi.");
+        wifiWarning = new JLabel("Assicurati che il dispositivo ricevente sia connesso alla tua stessa rete WiFi.");
         wifiWarning.setFont(new Font("Arial", Font.PLAIN, 20));
         southPanel.add(wifiIcon);
         southPanel.add(wifiWarning);
@@ -104,6 +109,7 @@ public class UploadPanel extends JPanel {
                 deleteNotRespondigDevices();
             }
         }, 0, 5000);
+        changeLanguage();
     }
     private void listenUDP() {
         try {
@@ -123,7 +129,6 @@ public class UploadPanel extends JPanel {
             while (true) {
                 try {
                     this.udpSocket.receive(received);
-                    System.out.println("device found");
                     Host host = PacketUtils.deencapsulate(received);
                     if(host.getPacketType() == 0) {
                         DeviceButton device = new DeviceButton(host);
@@ -181,7 +186,7 @@ public class UploadPanel extends JPanel {
         File file = this.actionSelectionPanel.getSelectedFile();
         for(int i = 0; i < this.mainFrame.uploadProgressBar.size(); i++) {
             FileProgressBarPanel curr = this.mainFrame.uploadProgressBar.get(i);
-            if(file.getName().equals(curr.getName()) && host.getIp().equals(curr.getIp())) return;
+            if(file.getName().equals(curr.getName()) && !curr.getIsCompleted() && host.getIp().equals(curr.getIp())) return;
         }
         FileProgressBarPanel currProgressBar = null;
         try (Socket socket = new Socket(host.getIp(), host.getPort())) {
@@ -210,7 +215,7 @@ public class UploadPanel extends JPanel {
             byte[] buffer = new byte[1024 * 1024];
             final int startSize = dataOutputStream.size();
 
-            FileProgressBarPanel fileProgressBar = new FileProgressBarPanel(file.getName(), host.getIp(), socket);
+            FileProgressBarPanel fileProgressBar = new FileProgressBarPanel("", file.getName(), host.getIp(), socket, false);
             currProgressBar = fileProgressBar;
             this.mainFrame.uploadProgressBar.add(fileProgressBar);
             updateProgressBar();
@@ -233,7 +238,7 @@ public class UploadPanel extends JPanel {
                         fileProgressBar.setFailed();
                         updateProgressBar();
                         JOptionPane.showMessageDialog(mainFrame,
-                                "Non è stato possibile inviare il file: " + file.getName(),
+                                fileSendErrorString + file.getName(),
                                 "Socket Timeout",
                                 JOptionPane.ERROR_MESSAGE);
                         try {
@@ -291,7 +296,7 @@ public class UploadPanel extends JPanel {
                 }
             }
             JOptionPane.showMessageDialog(mainFrame,
-                    "Non è stato possibile connettersi all'host: " + host.getName(),
+                    hostUnreachableError + host.getName(),
                     "Host unreachable",
                     JOptionPane.ERROR_MESSAGE);
         }
@@ -348,6 +353,21 @@ public class UploadPanel extends JPanel {
                 devices.remove(devices.get(i));
                 updateProgressBarUI();
             }
+        }
+    }
+    public static void changeLanguage() {
+        if(wifiWarning == null) return;
+        if(MainFrame.language.equals("English")) {
+            wifiWarning.setText("Make sure that the receiver is connected to the same WiFi network.");
+            searchLabel.setText("Searching...");
+            fileSendErrorString = "Couldn't send the file: ";
+            hostUnreachableError = "Failed to connect to host: ";
+        }
+        if(MainFrame.language.equals("Italian")) {
+            wifiWarning.setText("Assicurati che il dispositivo ricevente sia connesso alla tua stessa rete WiFi.");
+            searchLabel.setText("Ricerca in corso...");
+            fileSendErrorString = "Non è stato possibile inviare il file: ";
+            hostUnreachableError = "Non è stato possibile connettersi all'host: ";
         }
     }
 }

@@ -12,7 +12,7 @@ public class FileMappings {
 
         putAll(new String[]{"aac", "aiff", "flac", "m4a", "m4b", "m4p", "mmf", "mp3", "ogg", "oga", "mogg", "row", "wma", "wav"}, "fileIcons/audiotrack.svg");
         putAll(new String[]{"apng", "bmp", "gif", "ico", "jpeg", "jpg", "m4a", "png", "webp", "svg"}, "fileIcons/image.svg");
-        putAll(new String[]{"webm", "mpg", "mpeg", "mp4", "m4p", "m4v", "avi", "wmv", "mov"}, "fileIcons/videoFile.svg");
+        putAll(new String[]{"webm", "mpg", "mpeg", "mp4", "m4p", "m4v", "avi", "wmv", "mov"}, "fileIcons/video_file.svg");
         mappings.put("txt", "fileIcons/text_snippet.svg");
         putAll(new String[]{"3ds", "collada", "fbx", "gltf", "glb", "obj", "blend"}, "fileIcons/model.svg");
         putAll(new String[]{"rar", "zip", "7z", "jar"}, "fileIcons/folder_zip.svg");

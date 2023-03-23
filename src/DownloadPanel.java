@@ -27,7 +27,18 @@ public class DownloadPanel extends JPanel {
     static WrapLayout progressBarWrapLayout;
     static InetSocketAddress group;
 
+    private static final String deviceNameString;
+    private static JLabel searchLabel;
+    private static JLabel deviceName;
+    private static JLabel wifiWarning;
+    private static String receivedFileError = "Non è stato possibile ricevere il file: ";
+
     static {
+        try {
+            deviceNameString = Inet4Address.getLocalHost().getHostName();
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
         try {
             group = new InetSocketAddress(InetAddress.getByName("224.0.0.255"), 10468);
         } catch (UnknownHostException e) {
@@ -77,7 +88,7 @@ public class DownloadPanel extends JPanel {
             }
             cardLayout.show(cardsPanel, "selection");
         });
-        JLabel searchLabel = new JLabel("Ricevi un file");
+        searchLabel = new JLabel("Ricevi un file");
         searchLabel.setFont(new Font("Arial", Font.PLAIN, 20));
         northPanelTop.add(backBtn);
         northPanelTop.add(searchLabel);
@@ -90,13 +101,8 @@ public class DownloadPanel extends JPanel {
 
         JPanel buttonPanel = new JPanel(new WrapLayout(FlowLayout.CENTER, 150, 0));
 
-        JLabel deviceName;
-        try {
-            deviceName = new JLabel("Il dispositivo è visibile come: " + Inet4Address.getLocalHost().getHostName(), SwingConstants.CENTER);
-            buttonPanel.add(deviceName);
-        } catch (UnknownHostException e) {
-            throw new RuntimeException(e);
-        }
+        deviceName = new JLabel("Il dispositivo è visibile come: " + deviceNameString, SwingConstants.CENTER);
+        buttonPanel.add(deviceName);
 
         JLabel deviceIcon = new JLabel("", SwingConstants.CENTER);
         devicePanel.addComponentListener(new LabelResizeListener(this.getClass().getResource("windows.svg").toString(), deviceIcon));
@@ -111,7 +117,7 @@ public class DownloadPanel extends JPanel {
         JLabel wifiIcon = new JLabel();
         wifiIcon.setIcon(new ImageIcon(PreloadedIcons.wifi));
 
-        JLabel wifiWarning = new JLabel("Questo dispositivo è ora visibile a tutti i dispositivi connessi alla tua stessa rete WiFi.");
+        wifiWarning = new JLabel("Questo dispositivo è ora visibile a tutti i dispositivi connessi alla tua stessa rete WiFi.");
         wifiWarning.setFont(new Font("Arial", Font.PLAIN, 20));
         southPanel.add(wifiIcon);
         southPanel.add(wifiWarning);
@@ -201,12 +207,14 @@ public class DownloadPanel extends JPanel {
             file = new File(this.actionSelectionPanel.getSelectedDirectory().toString()
                     + File.separator + filename);
 
-            OutputStream fileOutputStream = Files.newOutputStream(Paths.get(this.actionSelectionPanel.getSelectedDirectory().toString() + File.separator + filename));
+            OutputStream fileOutputStream = Files.newOutputStream(Paths.get(this.actionSelectionPanel.getSelectedDirectory().toString() +
+                    File.separator + filename));
 
             long size = dataInputStream.readLong();
             long total = size;
 
-            FileProgressBarPanel fileProgressBar = new FileProgressBarPanel(filename, null, socket);
+            FileProgressBarPanel fileProgressBar = new FileProgressBarPanel(this.actionSelectionPanel.getSelectedDirectory().toString(),
+                    filename, null, socket, true);
             currProgressBar = fileProgressBar;
             this.mainFrame.downloadProgressBar.add(fileProgressBar);
             updateProgressBar();
@@ -230,7 +238,7 @@ public class DownloadPanel extends JPanel {
                         fileProgressBar.setFailed();
                         updateProgressBar();
                         JOptionPane.showMessageDialog(mainFrame,
-                                "Non è stato possibile ricevere il file: " + filename,
+                                receivedFileError + filename,
                                 "Socket Timeout",
                                 JOptionPane.ERROR_MESSAGE);
                         try {
@@ -355,6 +363,21 @@ public class DownloadPanel extends JPanel {
             if(socket.isClosed()) continue;
             socket.send(packet);
             socket.close();
+        }
+    }
+    public static void changeLanguage() {
+        if(searchLabel == null) return;
+        if(MainFrame.language.equals("English")) {
+            searchLabel.setText("Receive a file");
+            deviceName.setText("The device is visible as: " + deviceNameString);
+            wifiWarning.setText("This device is now visible to all the devices connected to the same WiFi network.");
+            receivedFileError = "Couldn't receive the file: ";
+        }
+        if(MainFrame.language.equals("Italian")) {
+            searchLabel.setText("Ricevi un file");
+            deviceName.setText("Il dispositivo è visibile come: " + deviceNameString);
+            wifiWarning.setText("Questo dispositivo è ora visibile a tutti i dispositivi connessi alla tua stessa rete WiFi.");
+            receivedFileError = "Non è stato possibile ricevere il file: ";
         }
     }
 }
