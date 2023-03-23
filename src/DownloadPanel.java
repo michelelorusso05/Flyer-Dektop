@@ -182,8 +182,8 @@ public class DownloadPanel extends JPanel {
     }
     public void TCPConnection() {
         FileProgressBarPanel currProgressBar = null;
+        File file = null;
         try (Socket socket = consumeSocket()){
-            socket.setSoTimeout(10000);
             socket.setReceiveBufferSize(1024 * 1024);
             DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
 
@@ -198,6 +198,8 @@ public class DownloadPanel extends JPanel {
             dataInputStream.read(mimetypeBuffer);
 
             String filename = new String(filenameBuffer);
+            file = new File(this.actionSelectionPanel.getSelectedDirectory().toString()
+                    + File.separator + filename);
 
             OutputStream fileOutputStream = Files.newOutputStream(Paths.get(this.actionSelectionPanel.getSelectedDirectory().toString() + File.separator + filename));
 
@@ -234,6 +236,7 @@ public class DownloadPanel extends JPanel {
                         try {
                             socket.close();
                             this.cancel();
+                            throw new SocketException();
                         } catch (IOException ex) {
                             this.cancel();
                         }
@@ -242,11 +245,10 @@ public class DownloadPanel extends JPanel {
             }, 1000, 10000);
             long startTime = System.currentTimeMillis();
             long acc = 0;
-            while (size > 0
-                    && (bytes = dataInputStream.read(
-                    buffer, 0,
-                    (int)Math.min(buffer.length, size))) != -1) {
+            while (size > 0) {
 
+                bytes = dataInputStream.read(buffer, 0, (int) Math.min(buffer.length, size));
+                if (bytes == -1) throw new SocketException();
                 fileOutputStream.write(buffer, 0, bytes);
                 size -= bytes;
                 acc += bytes;
@@ -276,10 +278,17 @@ public class DownloadPanel extends JPanel {
             fileOutputStream.close();
         } catch (IOException e) {
             if(currProgressBar != null) {
-                if(currProgressBar.getIsCanceled()) return;
+                if(currProgressBar.getIsCanceled()) {
+                    if(file != null)
+                        file.delete();
+                    return;
+                }
+                if(currProgressBar.getProgressBar().getValue() < 100) {
+                    currProgressBar.setCanceled();
+                    if(file != null)
+                        file.delete();
+                }
             }
-            System.err.println("Socket timeout");
-            e.printStackTrace();
         }
     }
     public void updateProgressBarUI() {

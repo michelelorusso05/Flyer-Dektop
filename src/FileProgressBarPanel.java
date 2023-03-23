@@ -7,6 +7,7 @@ import java.net.Socket;
 
 public class FileProgressBarPanel extends JPanel{
     private final JLabel fileName;
+    private final String actualFileName;
     private final JProgressBar progressBar;
     private final InetAddress ip;
     private boolean isClosed = false;
@@ -20,6 +21,7 @@ public class FileProgressBarPanel extends JPanel{
 
     public FileProgressBarPanel(String fileName, InetAddress ip, Socket socket) {
         super(new BorderLayout(5, 5));
+        this.actualFileName = fileName;
         JPanel centerPanel = new JPanel(new WrapLayout(FlowLayout.CENTER));
         String currFileName = fileName;
         if(currFileName.length() >= 14) {
@@ -66,7 +68,7 @@ public class FileProgressBarPanel extends JPanel{
         add(southPanel, BorderLayout.SOUTH);
     }
     public JProgressBar getProgressBar(){return progressBar;}
-    public String getName() {return fileName.getText();}
+    public String getName() {return actualFileName;}
     public InetAddress getIp() {return ip;}
     public boolean getIsClosed() {return isClosed;}
     public boolean getNeedUpdate() {return this.needUpdate;}

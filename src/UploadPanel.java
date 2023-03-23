@@ -123,6 +123,7 @@ public class UploadPanel extends JPanel {
             while (true) {
                 try {
                     this.udpSocket.receive(received);
+                    System.out.println("device found");
                     Host host = PacketUtils.deencapsulate(received);
                     if(host.getPacketType() == 0) {
                         DeviceButton device = new DeviceButton(host);
@@ -256,7 +257,7 @@ public class UploadPanel extends JPanel {
 
                 if(System.currentTimeMillis() - startTime >= 1000) {
                     float speed = (float)acc / 1000;
-                    DecimalFormat decimalFormat = new DecimalFormat("#.##");
+                    DecimalFormat decimalFormat = new DecimalFormat("0.00");
                     String speedText = speed > 1000 ?
                             decimalFormat.format((speed / 1000)) + "MB/s" :
                             decimalFormat.format(speed) + "kB/s";

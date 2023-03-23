@@ -1,5 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -9,10 +13,11 @@ import java.util.ArrayList;
 public class ActionSelectionPanel extends JPanel {
     private File selectedFile;
     private File selectedDirectory;
+    private ActionSelectionPanel actionSelectionPanel;
     public ActionSelectionPanel(CardLayout cardLayout, JPanel cardsPanel, MainFrame mainFrame) {
         SpringLayout layout = new SpringLayout();
         setLayout(layout);
-
+        actionSelectionPanel = this;
         // Add components
         //Upload Button
         JButton upload = new JButton();
@@ -86,6 +91,21 @@ public class ActionSelectionPanel extends JPanel {
         layout.putConstraint(SpringLayout.NORTH, download, 16, SpringLayout.NORTH, this);
         layout.putConstraint(SpringLayout.EAST, download, -16, SpringLayout.EAST, this);
         layout.putConstraint(SpringLayout.SOUTH, download, -16, SpringLayout.SOUTH, this);
+
+        setDropTarget(new DropTarget() {
+            public synchronized void drop(DropTargetDropEvent evt) {
+                try {
+                    evt.acceptDrop(DnDConstants.ACTION_COPY);
+                    java.util.List<File> droppedFiles = (java.util.List<File>) evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+                    selectedFile = droppedFiles.get(0);
+                    UploadPanel uploadPanel = new UploadPanel(cardLayout, cardsPanel, actionSelectionPanel, mainFrame);
+                    cardsPanel.add(uploadPanel, "upload");
+                    cardLayout.show(cardsPanel, "upload");
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
     }
 
     public File getSelectedFile() {return selectedFile;}
