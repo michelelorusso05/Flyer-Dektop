@@ -113,7 +113,7 @@ public class UploadPanel extends JPanel {
             }
 
             this.udpSocket = new MulticastSocket(10468);
-            InetSocketAddress group = new InetSocketAddress(InetAddress.getByName("239.255.255.250"), 10468);
+            InetSocketAddress group = new InetSocketAddress(InetAddress.getByName("224.0.0.255"), 10468);
 
             for(NetworkInterface networkInterface : Host.getActiveInterfaces())
                 this.udpSocket.joinGroup(group, networkInterface);

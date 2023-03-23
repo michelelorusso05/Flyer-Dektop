@@ -29,7 +29,7 @@ public class DownloadPanel extends JPanel {
 
     static {
         try {
-            group = new InetSocketAddress(InetAddress.getByName("239.255.255.250"), 10468);
+            group = new InetSocketAddress(InetAddress.getByName("224.0.0.255"), 10468);
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }
