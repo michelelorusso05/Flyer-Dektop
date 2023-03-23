@@ -273,12 +273,13 @@ public class DownloadPanel extends JPanel {
             }
             fileProgressBar.getProgressBar().setValue(100);
             fileProgressBar.setCompleted();
+            file = null;
             updateProgressBar();
             dataInputStream.close();
             fileOutputStream.close();
         } catch (IOException e) {
             if(currProgressBar != null) {
-                if(currProgressBar.getIsCanceled()) {
+                if(currProgressBar.getIsCanceled() || currProgressBar.getIsFailed()) {
                     if(file != null)
                         file.delete();
                     return;
