@@ -132,6 +132,7 @@ public class DownloadPanel extends JPanel {
 
         loadProgressBar();
         updateProgressBarUI();
+        changeLanguage();
     }
     private void initSocket() {
         try {

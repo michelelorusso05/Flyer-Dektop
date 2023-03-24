@@ -104,6 +104,7 @@ public class ActionSelectionPanel extends JPanel {
                     evt.acceptDrop(DnDConstants.ACTION_COPY);
                     java.util.List<File> droppedFiles = (java.util.List<File>) evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
                     selectedFile = droppedFiles.get(0);
+                    if(selectedFile.isDirectory()) return;
                     UploadPanel uploadPanel = new UploadPanel(cardLayout, cardsPanel, actionSelectionPanel, mainFrame);
                     cardsPanel.add(uploadPanel, "upload");
                     cardLayout.show(cardsPanel, "upload");
