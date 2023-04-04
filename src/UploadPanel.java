@@ -186,7 +186,12 @@ public class UploadPanel extends JPanel {
         File file = this.actionSelectionPanel.getSelectedFile();
         for(int i = 0; i < this.mainFrame.uploadProgressBar.size(); i++) {
             FileProgressBarPanel curr = this.mainFrame.uploadProgressBar.get(i);
-            if(file.getName().equals(curr.getName()) && !curr.getIsCompleted() && host.getIp().equals(curr.getIp())) return;
+            if(file.getName().equals(curr.getName()) &&
+                    !curr.getIsCompleted() &&
+                    !curr.getIsCanceled() &&
+                    !curr.getIsFailed() &&
+                    host.getIp().equals(curr.getIp())
+            ) return;
         }
         FileProgressBarPanel currProgressBar = null;
         try (Socket socket = new Socket(host.getIp(), host.getPort())) {
