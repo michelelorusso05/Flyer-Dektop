@@ -229,7 +229,7 @@ public class UploadPanel extends JPanel {
             byte[] buffer = new byte[1024 * 1024];
             final int startSize = dataOutputStream.size();
 
-            FileProgressBarPanel fileProgressBar = new FileProgressBarPanel("", file.getName(), host.getIp(), socket, false);
+            FileProgressBarPanel fileProgressBar = new FileProgressBarPanel("", file.getName(), host.getIp(), socket, false, null);
             currProgressBar = fileProgressBar;
             this.mainFrame.uploadProgressBar.add(fileProgressBar);
             updateProgressBar();

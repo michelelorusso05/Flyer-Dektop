@@ -23,8 +23,9 @@ public class FileProgressBarPanel extends JPanel{
     private boolean isCanceled = false;
     private boolean isCompleted = false;
 
-    public FileProgressBarPanel(String path, String fileName, InetAddress ip, Socket socket, boolean isDownload) {
+    public FileProgressBarPanel(String path, String fileName, InetAddress ip, Socket socket, boolean isDownload, String senderName) {
         super(new BorderLayout(5, 5));
+        setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.WHITE));
         if(isDownload)
             setCursor(new Cursor(Cursor.HAND_CURSOR));
         addMouseListener(new MouseAdapter() {
@@ -40,11 +41,19 @@ public class FileProgressBarPanel extends JPanel{
             }
         });
 
+        JPanel northPanel = new JPanel();
+        if(senderName != null) {
+            if(senderName.length() >= 14)
+                senderName = senderName.substring(0, 14) + "…";
+            northPanel.add(new JLabel("Inviato da " + senderName));
+        }
+        add(northPanel, BorderLayout.NORTH);
+
         this.actualFileName = fileName;
         JPanel centerPanel = new JPanel(new WrapLayout(FlowLayout.CENTER));
         String currFileName = fileName;
-        if(currFileName.length() >= 14) {
-            currFileName = currFileName.substring(0, 14) + "…";
+        if(currFileName.length() >= 25) {
+            currFileName = currFileName.substring(0, 25) + "…";
         }
         this.fileName = new JLabel(currFileName, SwingConstants.CENTER);
         this.progressBar = new JProgressBar();
@@ -62,7 +71,7 @@ public class FileProgressBarPanel extends JPanel{
         this.canceled = new JLabel("Operazione annullata");
         this.canceled.setVisible(false);
 
-        JPanel southPanel = new JPanel(new FlowLayout());
+        JPanel southPanel = new JPanel(new WrapLayout(FlowLayout.CENTER));
         JButton closeButton = new JButton();
         closeButton.addActionListener(e -> {
             if(this.progressBar.getValue() == 100 || this.isFailed || this.isCanceled) {

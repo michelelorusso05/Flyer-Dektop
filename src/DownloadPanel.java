@@ -31,6 +31,7 @@ public class DownloadPanel extends JPanel {
     private static JLabel searchLabel;
     private static JLabel deviceName;
     private static JLabel wifiWarning;
+    private static JButton clearBtn;
     private static String receivedFileError = "Non è stato possibile ricevere il file: ";
 
     static {
@@ -64,6 +65,9 @@ public class DownloadPanel extends JPanel {
                             updateProgressBar();
                         }
                     }
+                } else {
+                    if (clearBtn != null)
+                        clearBtn.setVisible(false);
                 }
             }
         }, 0, 10);
@@ -124,11 +128,27 @@ public class DownloadPanel extends JPanel {
 
         add(southPanel, BorderLayout.SOUTH);
 
+        JPanel eastPanel = new JPanel(new BorderLayout());
+        clearBtn = new JButton("Elimina tutto");
+        clearBtn.setVisible(mainFrame.downloadProgressBar.size() != 0);
+        clearBtn.addActionListener(e -> {
+            for(int i = mainFrame.downloadProgressBar.size() - 1; i >= 0; i--) {
+                FileProgressBarPanel curr = mainFrame.downloadProgressBar.get(i);
+                if(curr.getIsFailed() || curr.getIsCanceled() || curr.getIsCompleted()) {
+                    mainFrame.downloadProgressBar.remove(curr);
+                }
+            }
+            clearBtn.setVisible(false);
+            updateProgressBar();
+        });
+
         JScrollPane eastScrollPanel = new JScrollPane(progressBarPanel);
         eastScrollPanel.setBorder(null);
         eastScrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         eastScrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        add(eastScrollPanel, BorderLayout.EAST);
+        eastPanel.add(eastScrollPanel, BorderLayout.CENTER);
+        eastPanel.add(clearBtn, BorderLayout.SOUTH);
+        add(eastPanel, BorderLayout.EAST);
 
         loadProgressBar();
         updateProgressBarUI();
@@ -222,9 +242,11 @@ public class DownloadPanel extends JPanel {
             long total = size;
 
             FileProgressBarPanel fileProgressBar = new FileProgressBarPanel(this.actionSelectionPanel.getSelectedDirectory().toString(),
-                    filename, null, socket, true);
+                    filename, null, socket, true, new String(deviceNameBuffer));
             currProgressBar = fileProgressBar;
             this.mainFrame.downloadProgressBar.add(fileProgressBar);
+            if(clearBtn != null)
+                clearBtn.setVisible(true);
             updateProgressBar();
 
             byte[] buffer = new byte[1024 * 1024];
@@ -380,12 +402,14 @@ public class DownloadPanel extends JPanel {
             deviceName.setText("The device is visible as: " + deviceNameString);
             wifiWarning.setText("This device is now visible to all the devices connected to the same WiFi network.");
             receivedFileError = "Couldn't receive the file: ";
+            clearBtn.setText("Clear all");
         }
         if(MainFrame.language.equals("Italian")) {
             searchLabel.setText("Ricevi un file");
             deviceName.setText("Il dispositivo è visibile come: " + deviceNameString);
             wifiWarning.setText("Questo dispositivo è ora visibile a tutti i dispositivi connessi alla tua stessa rete WiFi.");
             receivedFileError = "Non è stato possibile ricevere il file: ";
+            clearBtn.setText("Elimina tutto");
         }
     }
 }
