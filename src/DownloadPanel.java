@@ -196,6 +196,13 @@ public class DownloadPanel extends JPanel {
 
             int bytes;
 
+            int version = dataInputStream.readByte();
+            int type = dataInputStream.readByte();
+
+            int deviceNameLength = dataInputStream.readByte();
+            byte[] deviceNameBuffer = new byte[deviceNameLength];
+            dataInputStream.read(deviceNameBuffer);
+
             int filenameLength = dataInputStream.readByte();
             byte[] filenameBuffer = new byte[filenameLength];
             dataInputStream.read(filenameBuffer);

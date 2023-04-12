@@ -205,6 +205,15 @@ public class UploadPanel extends JPanel {
             byte[] mimetypeStringBytes = Files.probeContentType(file.toPath()) == null ?
                     "application/octet-stream".getBytes() : Files.probeContentType(file.toPath()).getBytes();
 
+            String deviceName = Host.getHostname();
+            // Write flow protocol version
+            dataOutputStream.writeByte(PacketUtils.flowVersion);
+            // Write data type
+            dataOutputStream.writeByte(1);
+            // Write device name length
+            dataOutputStream.writeByte(deviceName.length());
+            // Write device name
+            dataOutputStream.write(deviceName.getBytes());
             // Write filename size
             dataOutputStream.writeByte(filenameStringBytes.length);
             // Write filename
