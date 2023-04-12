@@ -5,12 +5,12 @@ public class PacketUtils {
     public final static int flowVersion = 1;
     public static byte[] encapsulate(int port, int deviceType, int packetType, String name) {
         byte[] packet = new byte[128];
-        packet[0] = flowVersion;
+        packet[0] = discoveryVersion;
         packet[1] = (byte) ((port >>> 8) & 255);
         packet[2] = (byte) (port & 255);
         packet[3] = (byte) deviceType;
         packet[4] = (byte) packetType;
-        name = name.substring(0, Math.min(119, name.length()));
+        name = name.substring(0, Math.min(120, name.length()));
         System.arraycopy(name.getBytes(), 0, packet, 8, name.length());
         return packet;
     }
