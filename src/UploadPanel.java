@@ -20,6 +20,7 @@ public class UploadPanel extends JPanel {
 
     private static JLabel wifiWarning;
     private static JLabel searchLabel;
+    private static JButton clearBtn;
     private static String fileSendErrorString = "Non è stato possibile inviare il file: ";
     private static String hostUnreachableError = "Non è stato possibile connettersi all'host: ";
 
@@ -42,6 +43,9 @@ public class UploadPanel extends JPanel {
                             updateProgressBar();
                         }
                     }
+                }else {
+                    if (clearBtn != null)
+                        clearBtn.setVisible(false);
                 }
             }
         }, 0, 10);
@@ -93,11 +97,27 @@ public class UploadPanel extends JPanel {
         southPanel.add(wifiWarning);
         add(southPanel, BorderLayout.SOUTH);
 
+        JPanel eastPanel = new JPanel(new BorderLayout());
+        clearBtn = new JButton("Elimina tutto");
+        clearBtn.setVisible(mainFrame.uploadProgressBar.size() != 0);
+        clearBtn.addActionListener(e -> {
+            for(int i = mainFrame.uploadProgressBar.size() - 1; i >= 0; i--) {
+                FileProgressBarPanel curr = mainFrame.uploadProgressBar.get(i);
+                if(curr.getIsFailed() || curr.getIsCanceled() || curr.getIsCompleted()) {
+                    mainFrame.uploadProgressBar.remove(curr);
+                }
+            }
+            clearBtn.setVisible(false);
+            updateProgressBar();
+        });
+
         JScrollPane eastScrollPanel = new JScrollPane(progressBarPanel);
         eastScrollPanel.setBorder(null);
         eastScrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         eastScrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        add(eastScrollPanel, BorderLayout.EAST);
+        eastPanel.add(eastScrollPanel, BorderLayout.CENTER);
+        eastPanel.add(clearBtn, BorderLayout.SOUTH);
+        add(eastPanel, BorderLayout.EAST);
 
         loadProgressBar();
         updateProgressBarUI();
@@ -233,6 +253,9 @@ public class UploadPanel extends JPanel {
             currProgressBar = fileProgressBar;
             this.mainFrame.uploadProgressBar.add(fileProgressBar);
             updateProgressBar();
+
+            if(clearBtn != null)
+                clearBtn.setVisible(true);
 
             java.util.Timer timeoutTimer = new Timer();
 
@@ -376,12 +399,14 @@ public class UploadPanel extends JPanel {
             searchLabel.setText("Searching...");
             fileSendErrorString = "Couldn't send the file: ";
             hostUnreachableError = "Failed to connect to host: ";
+            clearBtn.setText("Clear all");
         }
         if(MainFrame.language.equals("Italian")) {
             wifiWarning.setText("Assicurati che il dispositivo ricevente sia connesso alla tua stessa rete WiFi.");
             searchLabel.setText("Ricerca in corso...");
             fileSendErrorString = "Non è stato possibile inviare il file: ";
             hostUnreachableError = "Non è stato possibile connettersi all'host: ";
+            clearBtn.setText("Elimina tutto");
         }
     }
 }
