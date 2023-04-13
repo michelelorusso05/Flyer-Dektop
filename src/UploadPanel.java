@@ -101,12 +101,15 @@ public class UploadPanel extends JPanel {
         clearBtn = new JButton("Elimina tutto");
         clearBtn.setVisible(mainFrame.uploadProgressBar.size() != 0);
         clearBtn.addActionListener(e -> {
+            boolean hasRemovedSomething = false;
             for(int i = mainFrame.uploadProgressBar.size() - 1; i >= 0; i--) {
                 FileProgressBarPanel curr = mainFrame.uploadProgressBar.get(i);
                 if(curr.getIsFailed() || curr.getIsCanceled() || curr.getIsCompleted()) {
                     mainFrame.uploadProgressBar.remove(curr);
+                    hasRemovedSomething = true;
                 }
             }
+            if(!hasRemovedSomething) return;
             clearBtn.setVisible(false);
             updateProgressBar();
         });

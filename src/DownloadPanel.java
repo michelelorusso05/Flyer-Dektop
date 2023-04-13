@@ -132,12 +132,15 @@ public class DownloadPanel extends JPanel {
         clearBtn = new JButton("Elimina tutto");
         clearBtn.setVisible(mainFrame.downloadProgressBar.size() != 0);
         clearBtn.addActionListener(e -> {
+            boolean hasRemovedSomething = false;
             for(int i = mainFrame.downloadProgressBar.size() - 1; i >= 0; i--) {
                 FileProgressBarPanel curr = mainFrame.downloadProgressBar.get(i);
                 if(curr.getIsFailed() || curr.getIsCanceled() || curr.getIsCompleted()) {
                     mainFrame.downloadProgressBar.remove(curr);
+                    hasRemovedSomething = true;
                 }
             }
+            if(!hasRemovedSomething) return;
             clearBtn.setVisible(false);
             updateProgressBar();
         });
