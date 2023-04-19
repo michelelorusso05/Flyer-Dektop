@@ -98,7 +98,7 @@ public class UploadPanel extends JPanel {
         add(southPanel, BorderLayout.SOUTH);
 
         JPanel eastPanel = new JPanel(new BorderLayout());
-        clearBtn = new JButton("Elimina tutto");
+        clearBtn = new JButton("Pulisci");
         clearBtn.setVisible(mainFrame.uploadProgressBar.size() != 0);
         clearBtn.addActionListener(e -> {
             boolean hasRemovedSomething = false;
@@ -409,7 +409,7 @@ public class UploadPanel extends JPanel {
             searchLabel.setText("Ricerca in corso...");
             fileSendErrorString = "Non è stato possibile inviare il file: ";
             hostUnreachableError = "Non è stato possibile connettersi all'host: ";
-            clearBtn.setText("Elimina tutto");
+            clearBtn.setText("Pulisci");
         }
     }
 }

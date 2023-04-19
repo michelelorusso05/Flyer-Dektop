@@ -129,7 +129,7 @@ public class DownloadPanel extends JPanel {
         add(southPanel, BorderLayout.SOUTH);
 
         JPanel eastPanel = new JPanel(new BorderLayout());
-        clearBtn = new JButton("Elimina tutto");
+        clearBtn = new JButton("Pulisci");
         clearBtn.setVisible(mainFrame.downloadProgressBar.size() != 0);
         clearBtn.addActionListener(e -> {
             boolean hasRemovedSomething = false;
@@ -412,7 +412,7 @@ public class DownloadPanel extends JPanel {
             deviceName.setText("Il dispositivo è visibile come: " + deviceNameString);
             wifiWarning.setText("Questo dispositivo è ora visibile a tutti i dispositivi connessi alla tua stessa rete WiFi.");
             receivedFileError = "Non è stato possibile ricevere il file: ";
-            clearBtn.setText("Elimina tutto");
+            clearBtn.setText("Pulisci");
         }
     }
 }
