@@ -19,6 +19,8 @@ public class FileProgressBarPanel extends JPanel{
     private final JLabel failed;
     private final JLabel canceled;
     private final JLabel transferSpeed = new JLabel("0kB/s");
+    private final JLabel sentByLabel;
+    private String senderName = null;
     private boolean isFailed = false;
     private boolean isCanceled = false;
     private boolean isCompleted = false;
@@ -42,10 +44,13 @@ public class FileProgressBarPanel extends JPanel{
         });
 
         JPanel northPanel = new JPanel();
+        this.sentByLabel = new JLabel();
         if(senderName != null) {
             if(senderName.length() >= 14)
                 senderName = senderName.substring(0, 14) + "…";
-            northPanel.add(new JLabel("Inviato da " + senderName));
+            this.senderName = senderName;
+            this.sentByLabel.setText("Inviato da " + senderName);
+            northPanel.add(this.sentByLabel);
         }
         add(northPanel, BorderLayout.NORTH);
 
@@ -130,11 +135,15 @@ public class FileProgressBarPanel extends JPanel{
             this.completed.setText("Operation completed");
             this.failed.setText("Operation failed");
             this.canceled.setText("Operation cancelled");
+            if(this.senderName != null)
+                this.sentByLabel.setText("Sent by " + senderName);
         }
         if(MainFrame.language.equals("Italian")) {
             this.completed.setText("Operazione completata");
             this.failed.setText("Operazione non riuscita");
             this.canceled.setText("Operazione annullata");
+            if(this.senderName != null)
+                this.sentByLabel.setText("Inviato da " + senderName);
         }
     }
 }
