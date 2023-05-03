@@ -57,8 +57,8 @@ public class FileProgressBarPanel extends JPanel{
         this.actualFileName = fileName;
         JPanel centerPanel = new JPanel(new WrapLayout(FlowLayout.CENTER));
         String currFileName = fileName;
-        if(currFileName.length() >= 25) {
-            currFileName = currFileName.substring(0, 25) + "…";
+        if(currFileName.length() >= 22) {
+            currFileName = currFileName.substring(0, 22) + "…";
         }
         this.fileName = new JLabel(currFileName, SwingConstants.CENTER);
         this.progressBar = new JProgressBar();
