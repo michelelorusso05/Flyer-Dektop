@@ -165,7 +165,7 @@ public class DownloadPanel extends JPanel {
             new Thread(() -> {
                 try {
                     while (true) {
-                        socket = serverSocket.accept();
+                            socket = serverSocket.accept();
                         onConnectionReceived();
                     }
                 } catch (IOException ignored) {}

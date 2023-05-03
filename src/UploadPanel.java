@@ -232,7 +232,7 @@ public class UploadPanel extends JPanel {
             // Write flow protocol version
             dataOutputStream.writeByte(PacketUtils.flowVersion);
             // Write data type
-            dataOutputStream.writeByte(1);
+            dataOutputStream.writeByte(0);
             // Write device name length
             dataOutputStream.writeByte(deviceName.length());
             // Write device name
