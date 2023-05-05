@@ -13,7 +13,7 @@ public class MainFrame extends JFrame {
         //Viene impostato il look and feel di FlatLaf con tema scuro
         FlatDarkLaf.setup();
         //Viene impostata l'icona che appare sulla barra delle applicazioni
-        setIconImage(PreloadedIcons.icon.getImage());
+        setIconImage(PreloadedIcons.icon);
 
         //Viene creato il pulsante sulla barra del menu per poter cambiare la lingua
         JMenuBar menuBar = new JMenuBar();

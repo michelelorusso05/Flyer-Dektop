@@ -9,7 +9,7 @@ public class PreloadedIcons {
     public final static Image wifi;
     public final static Image genericFile;
     public final static Image folder;
-    public final static ImageIcon icon;
+    public final static Image icon;
     public final static ImageIcon spinner;
     public final static Image close;
 
@@ -21,7 +21,7 @@ public class PreloadedIcons {
         wifi = new SVGImageLoader(PreloadedIcons.class.getResource("wifi.svg").toString(), 32, 32).getImage();
         genericFile = new SVGImageLoader(PreloadedIcons.class.getResource("genericFile.svg").toString(), 32, 32).getImage();
         folder = new SVGImageLoader(PreloadedIcons.class.getResource("folder.svg").toString(), 32, 32).getImage();
-        icon = new ImageIcon(PreloadedIcons.class.getResource("icon.png"));
+        icon = new SVGImageLoader(PreloadedIcons.class.getResource("icon.svg").toString(), 500, 500).getImage();
         spinner = new ImageIcon(PreloadedIcons.class.getResource("spinner.gif"));
         close = new SVGImageLoader(PreloadedIcons.class.getResource("close.svg").toString(), 8, 8).getImage();
     }
