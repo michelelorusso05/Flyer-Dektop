@@ -35,6 +35,7 @@ public class DownloadPanel extends JPanel {
     private static String receivedFileError = "Non è stato possibile ricevere il file: ";
 
     static {
+        //salva appena viene avviata la JVM il nome del dispositivo e il gruppo di multcast a cui connettersi
         try {
             deviceNameString = Inet4Address.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
@@ -53,8 +54,11 @@ public class DownloadPanel extends JPanel {
         this.mainFrame = mainFrame;
         DownloadPanel.progressBarWrapLayout = new WrapLayout();
         DownloadPanel.progressBarPanel = new JPanel(progressBarWrapLayout);
+        //Viene aperto il socket verso cui verrà inviato il file
         initSocket();
+        //Viene attivato il beacon che manda pacchetti di advertisement ogni secondo
         startBeacon();
+        //Viene creato il timer che aggiorna ogni 10 millisecondi le progressbar
         updateProgressBarTimer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -157,6 +161,9 @@ public class DownloadPanel extends JPanel {
         updateProgressBarUI();
         changeLanguage();
     }
+    /**
+     * Creates a new server socket and actively waits until some devices starts the TCP connection
+     * */
     private void initSocket() {
         try {
             serverSocket = new ServerSocket(0);
@@ -174,14 +181,24 @@ public class DownloadPanel extends JPanel {
             e.printStackTrace();
         }
     }
+    /**
+     * Consumes the last socket
+     * @return Socket socket
+     * */
     public static Socket consumeSocket() {
         Socket s = socket;
         socket = null;
         return s;
     }
+    /**
+     * Starts a new thread with the flow protocol by accepting the TCP connection
+     * */
     private void onConnectionReceived() {
         new Thread(this::TCPConnection).start();
     }
+    /**
+     * Starts a timer where every one second sends in the multicast group the advertisement packet
+     * */
     private void startBeacon() {
         // Create UDP station
         try {
@@ -210,6 +227,9 @@ public class DownloadPanel extends JPanel {
             e.printStackTrace();
         }
     }
+    /**
+     * Starts a TCP connection
+     * */
     public void TCPConnection() {
         FileProgressBarPanel currProgressBar = null;
         File file = null;
@@ -217,8 +237,7 @@ public class DownloadPanel extends JPanel {
             socket.setReceiveBufferSize(1024 * 1024);
             DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
 
-            int bytes;
-
+            //Legge tutti i campi del pacchetto flow
             int version = dataInputStream.readByte();
             int type = dataInputStream.readByte();
 
@@ -257,6 +276,7 @@ public class DownloadPanel extends JPanel {
 
             AtomicLong currProgress = new AtomicLong(0);
             AtomicLong prevProgress = new AtomicLong(1);
+            //Controlla se i byte ricevuti sia cambiato negli ultimi 10 secondi altrimenti scatta la SocketException
             timeoutTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
@@ -286,6 +306,7 @@ public class DownloadPanel extends JPanel {
             }, 1000, 10000);
             long startTime = System.currentTimeMillis();
             long acc = 0;
+            int bytes;
             while (size > 0) {
 
                 bytes = dataInputStream.read(buffer, 0, (int) Math.min(buffer.length, size));
@@ -297,6 +318,7 @@ public class DownloadPanel extends JPanel {
                 currProgress.set(total - size);
                 final int percentage = (int) ((float) currProgress.get() * 100f / total);
 
+                //Viene calcolata la velocità di trasferimento
                 if(System.currentTimeMillis() - startTime >= 1000) {
                     float speed = (float)acc / 1000;
                     DecimalFormat decimalFormat = new DecimalFormat("0.00");
@@ -333,6 +355,9 @@ public class DownloadPanel extends JPanel {
             }
         }
     }
+    /**
+     * Updates the UI of the progressbar panel
+     * */
     public void updateProgressBarUI() {
         DownloadPanel.progressBarPanel.revalidate();
         DownloadPanel.progressBarPanel.repaint();
@@ -341,6 +366,9 @@ public class DownloadPanel extends JPanel {
         repaint();
         updateUI();
     }
+    /**
+     * Loads in all the download panel progress bars
+     * */
     public void loadProgressBar() {
         for(int i = 0; i < this.mainFrame.downloadProgressBar.size(); i++) {
             FileProgressBarPanel curr = this.mainFrame.downloadProgressBar.get(i);
@@ -356,6 +384,9 @@ public class DownloadPanel extends JPanel {
         }
         updateProgressBarUI();
     }
+    /**
+     * Updates not only the UI but all the states of the progress bars
+     * */
     public void updateProgressBar() {
         DownloadPanel.progressBarPanel.removeAll();
         loadProgressBar();
@@ -368,6 +399,7 @@ public class DownloadPanel extends JPanel {
             }
             System.exit(0);
         }
+        //Se il programma è ridotto a icona e non c'è nessun download in corso chiude il programma
         if(this.mainFrame.getExtendedState() == Frame.ICONIFIED) {
             for(int i = 0; i < this.mainFrame.uploadProgressBar.size(); i++) {
                 FileProgressBarPanel curr = this.mainFrame.uploadProgressBar.get(i);
@@ -388,6 +420,9 @@ public class DownloadPanel extends JPanel {
             System.exit(0);
         }
     }
+    /**
+     * Sends a forgetMe packet in the multicast group
+     * */
     public static void sendForgetMeMessage() throws IOException {
         byte[] toSend = PacketUtils.encapsulate(currentPort.get(), 2, 1, Host.getHostname());
         DatagramPacket packet = new DatagramPacket(toSend, toSend.length, group);
@@ -398,6 +433,9 @@ public class DownloadPanel extends JPanel {
             socket.close();
         }
     }
+    /**
+     * changes the language based on the current language selected
+     * */
     public static void changeLanguage() {
         if(searchLabel == null) return;
         if(MainFrame.language.equals("English")) {

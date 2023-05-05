@@ -7,6 +7,7 @@ import java.util.HashMap;
 public class FileMappings {
     public static final HashMap<String, String> mappings;
 
+    //Vengono create tutte
     static {
         mappings = new HashMap<>();
 
@@ -48,11 +49,21 @@ public class FileMappings {
         mappings.put("bin", "fileIcons/binary.svg");
         mappings.put("pdf", "fileIcons/pdf.svg");
     }
+    /**
+     * Puts all the elements of an array into the HasMap
+     * @param types array of extensions
+     * @param pathToIcon path of the icon
+     * */
     private static void putAll(String[] types, String pathToIcon) {
         assert mappings != null;
         for (String type : types)
             mappings.put(type, pathToIcon);
     }
+    /**
+     * Returns the image icon based on the extension of the file
+     * @param file the file where the extension will be extracted
+     * @return ImageIcon icon
+     * */
     public static ImageIcon getIconFromFilename(File file) {
         String ext = file.getName().substring(file.getName().lastIndexOf('.') + 1);
         String found = mappings.get(ext);

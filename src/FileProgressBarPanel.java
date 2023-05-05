@@ -102,34 +102,84 @@ public class FileProgressBarPanel extends JPanel{
 
         changeLanguage();
     }
+    /**
+     * Returns the progress bar
+     * @return JProgressBar progressbar
+     * */
     public JProgressBar getProgressBar(){return progressBar;}
+    /**
+     * Returns the name of the file
+     * @return String name
+     * */
     public String getName() {return actualFileName;}
+    /**
+     * Returns the IP linked to the progress bar
+     * @return InetAddress ip
+     * */
     public InetAddress getIp() {return ip;}
+    /**
+     * Return true if the progress bar is closed
+     * @return boolean isClosed
+     * */
     public boolean getIsClosed() {return isClosed;}
+    /**
+     * Returns true if it needs Update
+     * @return boolean needsUpdate
+     * */
     public boolean getNeedUpdate() {return this.needUpdate;}
+    /**
+     * The progress bar will be updated
+     * */
     public void setNeedUpdate(boolean needUpdate) {this.needUpdate = needUpdate;}
+    /**
+     * Sets the state of the progress bar as completed
+     * */
     public void setCompleted() {
         this.progressBar.setVisible(false);
         this.transferSpeed.setVisible(false);
         this.completed.setVisible(true);
         this.isCompleted = true;
     }
+    /**
+     * Sets the state of the progress bar as failed
+     * */
     public void setFailed() {
         this.progressBar.setVisible(false);
         this.transferSpeed.setVisible(false);
         this.failed.setVisible(true);
         this.isFailed = true;
     }
+    /**
+     * Sets the state of the progress bar as canceled
+     * */
     public void setCanceled() {
         this.progressBar.setVisible(false);
         this.transferSpeed.setVisible(false);
         this.canceled.setVisible(true);
         this.isCanceled = true;
     }
+    /**
+     * returns true if the operation is failed
+     * @return boolean isFiled
+     * */
     public boolean getIsFailed(){return isFailed;}
+    /**
+     * returns true if the operation is canceled
+     * @return boolean isCanceled
+     * */
     public boolean getIsCanceled(){return isCanceled;}
+    /**
+     * returns true if the operation is completed
+     * @return boolean isCompleted
+     * */
     public boolean getIsCompleted() {return isCompleted;}
+    /**
+     * Sets the transfer speed text
+     * */
     public void setTransferSpeed(String speed) {this.transferSpeed.setText(speed);}
+    /**
+     * changes the language based on the current language selected
+     * */
     public  void changeLanguage() {
         if(MainFrame.language.equals("English")) {
             this.completed.setText("Operation completed");

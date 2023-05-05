@@ -22,41 +22,63 @@ public class Host {
         this.type = type;
         this.packetType = packetType;
     }
-
+    /**
+     * Returns the ip of the host
+     * @return InetAddress ip
+     * */
     public InetAddress getIp() {
         return ip;
     }
-
+    /**
+     * Returns the name of the host
+     * @return String name
+     * */
     public String getName() {
         return name;
     }
-
+    /**
+     * Returns the TCP port of the host
+     * @return int port
+     * */
     public int getPort() {
         return port;
     }
-
+    /**
+     * Returns the device type of the host
+     * @return int type
+     * */
     public int getType() {
         return type;
     }
+    /**
+     * Updates the TCP port of the host
+     * @param newPort new port
+     * */
     public void updatePort(int newPort) {
         port = newPort;
     }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
+    /**
+     * Returns the type of packet that the host receives/sends
+     * @return int packetType
+     * */
     public int getPacketType() {
         return packetType;
     }
-
+    /**
+     * Compares two Host
+     * @param obj the Host to compare
+     * @return boolean isEqual
+     * */
     @Override
     public boolean equals(Object obj) {
         if (obj.getClass() != Host.class) return false;
         Host host = (Host) obj;
         return this.ip.equals(host.getIp());
     }
-
+    /**
+     * Returns the name of the host
+     * @return String hostName
+     * */
     public static String getHostname() {
         try {
             return Inet4Address.getLocalHost().getHostName();
@@ -64,6 +86,10 @@ public class Host {
             throw new RuntimeException(e);
         }
     }
+    /**
+     * Returns all active interfaces of the device
+     * @return ArrayList of NetworkInterface activeInterfaces
+     * */
     public static ArrayList<NetworkInterface> getActiveInterfaces() throws SocketException {
         ArrayList<NetworkInterface> interfaces = new ArrayList<>();
 

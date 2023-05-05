@@ -24,8 +24,7 @@ public class ActionSelectionPanel extends JPanel {
         SpringLayout layout = new SpringLayout();
         setLayout(layout);
         actionSelectionPanel = this;
-        // Add components
-        //Upload Button
+
         JButton upload = new JButton();
         JPanel innerUploadBtnPanel = new JPanel(new BorderLayout());
         innerUploadBtnPanel.setOpaque(true);
@@ -41,6 +40,7 @@ public class ActionSelectionPanel extends JPanel {
 
         upload.add(innerUploadBtnPanel);
 
+        //Apre una finestra di esplora file per far scegliere un file
         upload.addActionListener((e) -> {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setDialogTitle(uploadFileChooserText);
@@ -69,6 +69,7 @@ public class ActionSelectionPanel extends JPanel {
 
         download.add(innerDownloadBtnPanel);
 
+        //Apre una finestra di esplora file per far scegliere una cartella
         download.addActionListener((e) -> {
             JFileChooser chooser = new JFileChooser();
             chooser.setDialogTitle(downloadDirectoryChooserText);
@@ -114,10 +115,20 @@ public class ActionSelectionPanel extends JPanel {
             }
         });
     }
-
+    /**
+     * returns the file selected by the user
+     * @return File file
+     * */
     public File getSelectedFile() {return selectedFile;}
+    /**
+     * returns the directory selected by the user
+     * @return File directory
+     * */
     public File getSelectedDirectory() {return selectedDirectory;}
 
+    /**
+     * changes the language based on the current language selected
+     * */
     public static void changeLanguage() {
         if(uploadLabel == null) return;
         if(MainFrame.language.equals("English")) {
