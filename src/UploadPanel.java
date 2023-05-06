@@ -134,6 +134,9 @@ public class UploadPanel extends JPanel {
         }, 0, 5000);
         changeLanguage();
     }
+    /**
+     * Listens to all the UDP packet sent in the multicast group
+     * */
     private void listenUDP() {
         try {
             if (this.udpSocket != null && !this.udpSocket.isClosed()) {
@@ -205,6 +208,10 @@ public class UploadPanel extends JPanel {
             this.devices.get(index).setLastUpdate(System.currentTimeMillis());
         }
     }
+    /**
+     * Starts the TCP connection between the two hosts
+     * @param host host to connect
+     * */
     public void TCPConnection(Host host) {
         File file = this.actionSelectionPanel.getSelectedFile();
         for(int i = 0; i < this.mainFrame.uploadProgressBar.size(); i++) {
@@ -341,6 +348,9 @@ public class UploadPanel extends JPanel {
                     JOptionPane.ERROR_MESSAGE);
         }
     }
+    /**
+     * Updates the UI of the progressbar panel
+     * */
     public void updateProgressBarUI() {
         UploadPanel.progressBarPanel.revalidate();
         UploadPanel.progressBarPanel.repaint();
@@ -349,6 +359,9 @@ public class UploadPanel extends JPanel {
         repaint();
         updateUI();
     }
+    /**
+     * Loads in all the download panel progress bars
+     * */
     public void loadProgressBar() {
         for(int i = 0; i < this.mainFrame.uploadProgressBar.size(); i++) {
             FileProgressBarPanel curr = this.mainFrame.uploadProgressBar.get(i);
@@ -364,6 +377,9 @@ public class UploadPanel extends JPanel {
         }
         updateProgressBarUI();
     }
+    /**
+     * Updates not only the UI but all the states of the progress bars
+     * */
     public void updateProgressBar() {
         UploadPanel.progressBarPanel.removeAll();
         loadProgressBar();
@@ -386,6 +402,9 @@ public class UploadPanel extends JPanel {
             System.exit(0);
         }
     }
+    /**
+     * Deletes all the devices that are not sending advertisement packet for 5 seconds
+     * */
     public void deleteNotRespondigDevices() {
         for(int i = devices.size() - 1; i >= 0; i--) {
             if(System.currentTimeMillis() - devices.get(i).getLastUpdate() > 5000) {
@@ -395,6 +414,9 @@ public class UploadPanel extends JPanel {
             }
         }
     }
+    /**
+     * changes the language based on the current language selected
+     * */
     public static void changeLanguage() {
         if(wifiWarning == null) return;
         if(MainFrame.language.equals("English")) {

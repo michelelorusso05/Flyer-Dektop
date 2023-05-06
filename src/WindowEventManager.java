@@ -14,6 +14,10 @@ public class WindowEventManager implements WindowListener {
     public void windowOpened(WindowEvent e) {
     }
 
+    /**
+     * Function called when clicked the x for closing the window
+     * @param e window event
+     * */
     @Override
     public void windowClosing(WindowEvent e) {
         if(this.context.uploadProgressBar.size() == 0 && this.context.downloadProgressBar.size() == 0) {

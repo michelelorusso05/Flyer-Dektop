@@ -11,7 +11,10 @@ public class LabelResizeTextListener implements ComponentListener {
         this.label = label;
         this.divisor = divisor;
     }
-
+    /**
+     * This function is called when the container component is resized
+     * @param e component event
+     * */
     @Override
     public void componentResized(ComponentEvent e) {
         Dimension newSize = e.getComponent().getBounds().getSize();

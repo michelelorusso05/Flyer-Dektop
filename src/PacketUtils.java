@@ -3,6 +3,14 @@ import java.net.DatagramPacket;
 public class PacketUtils {
     public final static int discoveryVersion = 1;
     public final static int flowVersion = 1;
+    /**
+     * Creates the UDP packet by encapsulating all the fields
+     * @param port TCP port
+     * @param deviceType type of device
+     * @param  packetType type of packet
+     * @param name name of the device
+     * @return byte[] packet
+     * */
     public static byte[] encapsulate(int port, int deviceType, int packetType, String name) {
         byte[] packet = new byte[128];
         packet[0] = discoveryVersion;
@@ -14,6 +22,11 @@ public class PacketUtils {
         System.arraycopy(name.getBytes(), 0, packet, 8, name.length());
         return packet;
     }
+    /**
+     * Returns on an Host based on the DatagramPacket fields passed by parameter
+     * @param packet
+     * @return Host host
+     * */
     public static Host deencapsulate(DatagramPacket packet) {
         byte[] data = packet.getData();
         String name = new String(data, 8, 120);

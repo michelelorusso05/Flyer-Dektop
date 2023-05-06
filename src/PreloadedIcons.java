@@ -12,7 +12,7 @@ public class PreloadedIcons {
     public final static Image icon;
     public final static ImageIcon spinner;
     public final static Image close;
-
+    //Precarico tutte le immagini per evitare di doverle caricare in runtime
     static {
         phone = new SVGImageLoader(PreloadedIcons.class.getResource("phone.svg").toString(), 72, 72).getImage();
         tablet = new SVGImageLoader(PreloadedIcons.class.getResource("tablet.svg").toString(), 72, 72).getImage();
