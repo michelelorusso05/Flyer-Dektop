@@ -241,15 +241,15 @@ public class UploadPanel extends JPanel {
             // Write data type
             dataOutputStream.writeByte(0);
             // Write device name length
-            dataOutputStream.writeByte(deviceName.length());
+            dataOutputStream.writeInt(deviceName.length());
             // Write device name
             dataOutputStream.write(deviceName.getBytes());
             // Write filename size
-            dataOutputStream.writeByte(filenameStringBytes.length);
+            dataOutputStream.writeInt(filenameStringBytes.length);
             // Write filename
             dataOutputStream.write(filenameStringBytes);
             // Write mimetype length
-            dataOutputStream.writeByte(mimetypeStringBytes.length);
+            dataOutputStream.writeInt(mimetypeStringBytes.length);
             // Write mimetype
             dataOutputStream.write(mimetypeStringBytes);
             // Write content size
